@@ -234,10 +234,10 @@ const ActivityFeed = ({
   });
 
   return (
-    <Card className="w-full h-full bg-white shadow-sm border border-gray-200">
+    <Card className="w-full h-full bg-card dark:bg-gray-800 shadow-sm border border-border dark:border-gray-700">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-xl font-semibold text-gray-900">
+          <CardTitle className="text-xl font-semibold text-foreground dark:text-white">
             {title}
           </CardTitle>
           <div className="flex space-x-2">
@@ -286,20 +286,20 @@ const ActivityFeed = ({
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-foreground dark:text-white">
                               {activity.user.name}
                             </p>
                             {getActivityBadge(activity.type)}
                           </div>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-muted-foreground dark:text-gray-300">
                             {format(activity.timestamp, "MMM d, h:mm a")}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-foreground dark:text-gray-100">
                           {activity.description}
                         </p>
                         {activity.details && (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-muted-foreground dark:text-gray-300">
                             {activity.details}
                           </p>
                         )}
@@ -308,11 +308,11 @@ const ActivityFeed = ({
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <Clock className="h-8 w-8 text-gray-400 mb-2" />
-                    <h3 className="text-sm font-medium text-gray-900">
+                    <Clock className="h-8 w-8 text-muted-foreground dark:text-gray-500 mb-2" />
+                    <h3 className="text-sm font-medium text-foreground dark:text-white">
                       No activities found
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground dark:text-gray-400 mt-1">
                       Try changing your filters or time range
                     </p>
                   </div>

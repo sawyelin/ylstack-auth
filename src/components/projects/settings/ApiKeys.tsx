@@ -143,7 +143,7 @@ const ApiKeys = ({
   };
 
   return (
-    <div className="w-full bg-background p-6">
+    <div className="w-full bg-background dark:bg-gray-900 p-6">
       <Card>
         <CardHeader>
           <CardTitle>API Keys</CardTitle>
@@ -207,19 +207,19 @@ const ApiKeys = ({
 
             {/* Newly created key alert */}
             {newlyCreatedKey && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-4 mb-4">
                 <div className="flex">
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-yellow-800">
+                    <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
                       New API Key Created
                     </h3>
-                    <div className="mt-2 text-sm text-yellow-700">
+                    <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
                       <p>
                         Make sure to copy your API key now. You won't be able to
                         see it again!
                       </p>
                       <div className="mt-2 flex items-center space-x-2">
-                        <code className="bg-yellow-100 px-2 py-1 rounded text-yellow-900 font-mono text-sm">
+                        <code className="bg-yellow-100 dark:bg-yellow-900/30 px-2 py-1 rounded text-yellow-900 dark:text-yellow-200 font-mono text-sm">
                           {newlyCreatedKey}
                         </code>
                         <Button
@@ -248,26 +248,39 @@ const ApiKeys = ({
             <div className="rounded-md border">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-muted/50">
-                    <th className="px-4 py-3 text-left font-medium">Name</th>
-                    <th className="px-4 py-3 text-left font-medium">Key</th>
-                    <th className="px-4 py-3 text-left font-medium">Created</th>
-                    <th className="px-4 py-3 text-left font-medium">
+                  <tr className="border-b bg-muted/50 dark:bg-gray-800/50 dark:border-gray-700">
+                    <th className="px-4 py-3 text-left font-medium text-foreground dark:text-white">
+                      Name
+                    </th>
+                    <th className="px-4 py-3 text-left font-medium text-foreground dark:text-white">
+                      Key
+                    </th>
+                    <th className="px-4 py-3 text-left font-medium text-foreground dark:text-white">
+                      Created
+                    </th>
+                    <th className="px-4 py-3 text-left font-medium text-foreground dark:text-white">
                       Last Used
                     </th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
-                    <th className="px-4 py-3 text-right font-medium">
+                    <th className="px-4 py-3 text-left font-medium text-foreground dark:text-white">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-foreground dark:text-white">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {apiKeys.map((apiKey) => (
-                    <tr key={apiKey.id} className="border-b">
-                      <td className="px-4 py-3">{apiKey.name}</td>
+                    <tr
+                      key={apiKey.id}
+                      className="border-b dark:border-gray-700"
+                    >
+                      <td className="px-4 py-3 text-foreground dark:text-white">
+                        {apiKey.name}
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center space-x-2">
-                          <code className="font-mono bg-muted px-2 py-1 rounded text-xs">
+                          <code className="font-mono bg-muted dark:bg-gray-800 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
                             {keyVisibility[apiKey.id]
                               ? apiKey.key
                               : `${apiKey.key.substring(0, 8)}...${apiKey.key.substring(apiKey.key.length - 4)}`}
@@ -312,10 +325,10 @@ const ApiKeys = ({
                           </TooltipProvider>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-foreground dark:text-gray-300">
                         {formatDate(apiKey.created)}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-foreground dark:text-gray-300">
                         {formatDate(apiKey.lastUsed)}
                       </td>
                       <td className="px-4 py-3">

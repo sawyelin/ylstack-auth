@@ -143,13 +143,13 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-white p-6 rounded-lg shadow-sm">
+    <div className="w-full h-full bg-card dark:bg-gray-900 p-6 rounded-lg shadow-sm">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-800">
+          <h2 className="text-2xl font-semibold text-foreground dark:text-white">
             Email Templates
           </h2>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground dark:text-gray-400">
             Customize email templates for different user interactions
           </p>
         </div>
@@ -177,7 +177,7 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
                     <div
                       key={template.id}
                       onClick={() => handleTemplateChange(template.id)}
-                      className={`p-3 rounded-md cursor-pointer flex items-center justify-between ${selectedTemplateId === template.id ? "bg-primary/10 border border-primary/20" : "hover:bg-gray-100"}`}
+                      className={`p-3 rounded-md cursor-pointer flex items-center justify-between ${selectedTemplateId === template.id ? "bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/30" : "hover:bg-secondary/50 dark:hover:bg-gray-800"}`}
                     >
                       <div className="flex items-center gap-3">
                         <Mail
@@ -185,12 +185,14 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
                           className={
                             selectedTemplateId === template.id
                               ? "text-primary"
-                              : "text-gray-500"
+                              : "text-muted-foreground"
                           }
                         />
                         <div>
-                          <p className="font-medium text-sm">{template.name}</p>
-                          <p className="text-xs text-gray-500">
+                          <p className="font-medium text-sm text-foreground dark:text-white">
+                            {template.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground dark:text-gray-400">
                             {template.type}
                           </p>
                         </div>
@@ -330,54 +332,56 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
 
                 <Separator />
 
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <h3 className="text-sm font-medium mb-2">
+                <div className="bg-muted/50 dark:bg-gray-800 p-4 rounded-md">
+                  <h3 className="text-sm font-medium mb-2 text-foreground dark:text-white">
                     Available Variables
                   </h3>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex items-center gap-2">
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
                         {"{{name}}"}
                       </code>
-                      <span className="text-xs text-gray-500">User's name</span>
+                      <span className="text-xs text-muted-foreground dark:text-gray-400">
+                        User's name
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
                         {"{{email}}"}
                       </code>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground dark:text-gray-400">
                         User's email
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
                         {"{{verificationLink}}"}
                       </code>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground dark:text-gray-400">
                         Email verification URL
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
                         {"{{resetLink}}"}
                       </code>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground dark:text-gray-400">
                         Password reset URL
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
                         {"{{invitationLink}}"}
                       </code>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground dark:text-gray-400">
                         Invitation URL
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
                         {"{{inviterName}}"}
                       </code>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground dark:text-gray-400">
                         Inviter's name
                       </span>
                     </div>
@@ -392,9 +396,9 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
       {/* Preview Modal would be implemented here */}
       {previewVisible && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-[800px] max-w-[90vw] max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h3 className="font-semibold">
+          <div className="bg-background dark:bg-gray-800 rounded-lg w-[800px] max-w-[90vw] max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between">
+              <h3 className="font-semibold text-foreground dark:text-white">
                 Email Preview: {editedTemplate.subject}
               </h3>
               <Button
@@ -406,15 +410,15 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
               </Button>
             </div>
             <div className="p-4 overflow-auto flex-1">
-              <div className="bg-gray-50 p-6 rounded-md">
-                <div className="bg-white p-6 rounded border shadow-sm">
+              <div className="bg-muted/50 dark:bg-gray-700/50 p-6 rounded-md">
+                <div className="bg-white dark:bg-gray-900 p-6 rounded border shadow-sm dark:border-gray-700">
                   <div
                     dangerouslySetInnerHTML={{ __html: editedTemplate.content }}
                   />
                 </div>
               </div>
             </div>
-            <div className="p-4 border-t flex justify-end space-x-2">
+            <div className="p-4 border-t dark:border-gray-700 flex justify-end space-x-2">
               <Button
                 variant="outline"
                 onClick={() => setPreviewVisible(false)}

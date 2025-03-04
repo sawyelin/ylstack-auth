@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Plus, Filter } from "lucide-react";
 import ProjectCard from "./ProjectCard";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface Project {
   id: string;
@@ -76,9 +77,10 @@ const ProjectList = ({
       status: "maintenance",
     },
   ],
-  onCreateProject = () => console.log("Create new project"),
-  onSelectProject = (id) => console.log(`Selected project ${id}`),
+  onCreateProject,
+  onSelectProject,
 }: ProjectListProps) => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProjects, setFilteredProjects] = useState<Project[]>(projects);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -112,14 +114,34 @@ const ProjectList = ({
     }
   };
 
+  const handleCreateProject = () => {
+    if (onCreateProject) {
+      onCreateProject();
+    } else {
+      navigate("/dashboard/project/new");
+    }
+  };
+
+  const handleSelectProject = (id: string) => {
+    if (onSelectProject) {
+      onSelectProject(id);
+    } else {
+      navigate(`/dashboard/project/${id}`);
+    }
+  };
+
   return (
-    <div className="w-full bg-white p-6 rounded-lg shadow-sm">
+    <div className="w-full bg-card dark:bg-gray-800 p-6 rounded-lg shadow-sm">
       <div className="flex flex-col space-y-6">
         {/* Header with search and filters */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Projects</h2>
-            <p className="text-gray-500">Manage your authentication projects</p>
+            <h2 className="text-2xl font-bold text-foreground dark:text-white">
+              Projects
+            </h2>
+            <p className="text-muted-foreground dark:text-gray-400">
+              Manage your authentication projects
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
@@ -172,17 +194,17 @@ const ProjectList = ({
             transition={{ duration: 0.3 }}
           >
             <Card
-              className="w-full h-[220px] cursor-pointer hover:shadow-md transition-shadow duration-200 border-dashed border-2 border-gray-300 bg-gray-50"
-              onClick={onCreateProject}
+              className="w-full h-[220px] cursor-pointer hover:shadow-md transition-shadow duration-200 border-dashed border-2 border-border dark:border-gray-700 bg-secondary/10 dark:bg-gray-800/50"
+              onClick={handleCreateProject}
             >
               <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-4">
                   <Plus className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">
+                <h3 className="text-lg font-semibold mb-2 text-foreground dark:text-white">
                   Create New Project
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground dark:text-gray-400">
                   Set up a new authentication project for your application
                 </p>
               </div>
@@ -196,7 +218,7 @@ const ProjectList = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              onClick={() => onSelectProject(project.id)}
+              onClick={() => handleSelectProject(project.id)}
             >
               <ProjectCard
                 id={project.id}
@@ -215,11 +237,13 @@ const ProjectList = ({
         {/* Empty state */}
         {filteredProjects.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-              <Filter className="h-8 w-8 text-gray-400" />
+            <div className="w-16 h-16 rounded-full bg-secondary/20 dark:bg-gray-800 flex items-center justify-center mb-4">
+              <Filter className="h-8 w-8 text-muted-foreground dark:text-gray-400" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">No projects found</h3>
-            <p className="text-sm text-gray-500 max-w-md mb-6">
+            <h3 className="text-lg font-semibold mb-2 text-foreground dark:text-white">
+              No projects found
+            </h3>
+            <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md mb-6">
               {searchQuery
                 ? `No projects match "${searchQuery}". Try a different search term.`
                 : "No projects match the selected filters. Try changing your filters or create a new project."}

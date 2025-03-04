@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -38,13 +38,58 @@ const Navbar = ({
   onSignup = () => {},
   onLogout = () => {},
 }: NavbarProps) => {
+  const navigate = useNavigate();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Initialize theme based on system preference or saved preference
+  useEffect(() => {
+    // Check if dark mode is preferred or previously set
+    if (document.documentElement.classList.contains("dark")) {
+      setTheme("dark");
+    } else if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      setTheme("dark");
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    document.documentElement.classList.toggle("dark");
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
+
+  const handleLogin = () => {
+    if (onLogin) {
+      onLogin();
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
+  const handleSignup = () => {
+    if (onSignup) {
+      onSignup();
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout();
+    } else {
+      navigate("/");
+    }
   };
 
   const navItems = [
@@ -55,14 +100,16 @@ const Navbar = ({
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-gray-900 dark:border-gray-800">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
               <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-xl">AuthPlatform</span>
+            <span className="font-semibold text-xl text-foreground">
+              AuthPlatform
+            </span>
           </Link>
         </div>
 
@@ -123,23 +170,27 @@ const Navbar = ({
                   <p className="text-xs text-muted-foreground">{user.email}</p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard">Dashboard</Link>
+                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                  Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/account">Account Settings</Link>
+                <DropdownMenuItem
+                  onClick={() => navigate("/dashboard/settings")}
+                >
+                  Account Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onLogout}>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Log out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={onLogin}>
+              <Button variant="ghost" onClick={handleLogin}>
                 <LogIn className="mr-2 h-4 w-4" />
                 Login
               </Button>
-              <Button onClick={onSignup}>
+              <Button onClick={handleSignup}>
                 <UserPlus className="mr-2 h-4 w-4" />
                 Sign Up
               </Button>
@@ -224,7 +275,7 @@ const Navbar = ({
                         className="w-full justify-start"
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          window.location.href = "/dashboard";
+                          navigate("/dashboard");
                         }}
                       >
                         Dashboard
@@ -234,7 +285,7 @@ const Navbar = ({
                         className="w-full justify-start"
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          window.location.href = "/account";
+                          navigate("/dashboard/settings");
                         }}
                       >
                         Account Settings
@@ -244,7 +295,7 @@ const Navbar = ({
                         className="w-full mt-2"
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          onLogout();
+                          handleLogout();
                         }}
                       >
                         Log out
@@ -257,7 +308,7 @@ const Navbar = ({
                         className="w-full"
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          onLogin();
+                          handleLogin();
                         }}
                       >
                         <LogIn className="mr-2 h-4 w-4" />
@@ -267,7 +318,7 @@ const Navbar = ({
                         className="w-full"
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          onSignup();
+                          handleSignup();
                         }}
                       >
                         <UserPlus className="mr-2 h-4 w-4" />

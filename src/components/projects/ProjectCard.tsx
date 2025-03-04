@@ -4,6 +4,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { ArrowRight, Users, Activity, Lock } from "lucide-react";
 import { Progress } from "../ui/progress";
+import { useNavigate } from "react-router-dom";
 
 interface ProjectCardProps {
   id?: string;
@@ -26,6 +27,8 @@ const ProjectCard = ({
   lastActivity = "2 hours ago",
   status = "active",
 }: ProjectCardProps) => {
+  const navigate = useNavigate();
+
   const statusColors = {
     active: "bg-green-100 text-green-800 hover:bg-green-200",
     inactive: "bg-gray-100 text-gray-800 hover:bg-gray-200",
@@ -34,13 +37,21 @@ const ProjectCard = ({
 
   const userPercentage = Math.round((activeUsers / totalUsers) * 100);
 
+  const handleNavigateToProject = () => {
+    navigate(`/dashboard/project/${id}`);
+  };
+
   return (
-    <Card className="w-[350px] h-[220px] bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <Card className="w-[350px] h-[220px] bg-card dark:bg-gray-800 border border-border dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="font-semibold text-lg text-gray-900">{name}</h3>
-            <p className="text-sm text-gray-500 line-clamp-1">{description}</p>
+            <h3 className="font-semibold text-lg text-foreground dark:text-white">
+              {name}
+            </h3>
+            <p className="text-sm text-muted-foreground dark:text-gray-400 line-clamp-1">
+              {description}
+            </p>
           </div>
           <Badge className={statusColors[status]}>
             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -50,23 +61,27 @@ const ProjectCard = ({
       <CardContent className="pb-2">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <Users size={16} className="text-gray-500" />
-            <span className="text-sm text-gray-700">
+            <Users size={16} className="text-muted-foreground" />
+            <span className="text-sm text-foreground dark:text-gray-200">
               {userCount.toLocaleString()} users
             </span>
           </div>
 
           <div className="space-y-1">
             <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-600">Active users</span>
-              <span className="font-medium">{userPercentage}%</span>
+              <span className="text-muted-foreground dark:text-gray-400">
+                Active users
+              </span>
+              <span className="font-medium text-foreground dark:text-white">
+                {userPercentage}%
+              </span>
             </div>
             <Progress value={userPercentage} className="h-1.5" />
           </div>
 
           <div className="flex items-center gap-2">
-            <Activity size={16} className="text-gray-500" />
-            <span className="text-xs text-gray-600">
+            <Activity size={16} className="text-muted-foreground" />
+            <span className="text-xs text-muted-foreground dark:text-gray-400">
               Last activity: {lastActivity}
             </span>
           </div>
@@ -76,8 +91,8 @@ const ProjectCard = ({
         <Button
           variant="outline"
           size="sm"
-          className="w-full justify-between border-gray-200 hover:bg-gray-50"
-          onClick={() => console.log(`Navigate to project ${id}`)}
+          className="w-full justify-between border-border dark:border-gray-700 hover:bg-secondary/50 dark:hover:bg-gray-700/50"
+          onClick={handleNavigateToProject}
         >
           <span className="flex items-center gap-1">
             <Lock size={14} />

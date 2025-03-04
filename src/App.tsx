@@ -1,18 +1,57 @@
-import { Suspense } from "react";
-import { useRoutes, Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Home from "./components/home";
-import routes from "tempo-routes";
+import Dashboard from "./pages/dashboard";
+import ProjectDashboard from "./pages/dashboard/project/[id]/index";
+import ProjectSettings from "./pages/dashboard/project/[id]/settings";
+import ProjectUsers from "./pages/dashboard/project/[id]/users";
+
+// Lazy load additional pages
+const UsersPage = lazy(() => import("./pages/dashboard/users"));
+const AnalyticsPage = lazy(() => import("./pages/dashboard/analytics"));
+const ApiKeysPage = lazy(() => import("./pages/dashboard/api-keys"));
+const SettingsPage = lazy(() => import("./pages/dashboard/settings"));
+const EmailTemplatesPage = lazy(
+  () => import("./pages/dashboard/email-templates"),
+);
 
 function App() {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <>
+    <BrowserRouter>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center h-screen">
+            Loading...
+          </div>
+        }
+      >
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/project/:id" element={<ProjectDashboard />} />
+          <Route
+            path="/dashboard/project/:id/settings"
+            element={<ProjectSettings />}
+          />
+          <Route
+            path="/dashboard/project/:id/users"
+            element={<ProjectUsers />}
+          />
+          <Route path="/dashboard/users" element={<UsersPage />} />
+          <Route path="/dashboard/analytics" element={<AnalyticsPage />} />
+          <Route path="/dashboard/api-keys" element={<ApiKeysPage />} />
+          <Route path="/dashboard/settings" element={<SettingsPage />} />
+          <Route
+            path="/dashboard/email-templates"
+            element={<EmailTemplatesPage />}
+          />
+          <Route path="/dashboard/support" element={<Dashboard />} />
+          <Route path="/dashboard/profile" element={<SettingsPage />} />
+          <Route path="/dashboard/notifications" element={<Dashboard />} />
+          {import.meta.env.VITE_TEMPO && <Route path="/tempobook/*" />}
         </Routes>
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-      </>
-    </Suspense>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 

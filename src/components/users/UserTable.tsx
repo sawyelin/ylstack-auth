@@ -46,6 +46,7 @@ import {
   Key,
   Ban,
 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface User {
   id: string;
@@ -169,121 +170,178 @@ const UserTable = ({
   const getStatusBadge = (status: "active" | "pending" | "blocked") => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-500">Active</Badge>;
+        return (
+          <Badge className="bg-green-500 dark:bg-green-600 text-white">
+            Active
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-yellow-500">Pending</Badge>;
+        return (
+          <Badge className="bg-yellow-500 dark:bg-yellow-600 text-white">
+            Pending
+          </Badge>
+        );
       case "blocked":
-        return <Badge className="bg-red-500">Blocked</Badge>;
+        return (
+          <Badge className="bg-red-500 dark:bg-red-600 text-white">
+            Blocked
+          </Badge>
+        );
       default:
         return null;
     }
   };
 
   return (
-    <div className="bg-white rounded-md shadow-sm w-full">
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
+    <div className="w-full overflow-auto rounded-md border dark:border-gray-700">
+      <Table>
+        <TableHeader className="bg-muted/50 dark:bg-gray-800/50">
+          <TableRow>
+            <TableHead className="w-12">
+              <Checkbox
+                checked={
+                  selectedUsers.length === users.length && users.length > 0
+                }
+                onCheckedChange={(checked) => handleSelectAll(!!checked)}
+              />
+            </TableHead>
+            <TableHead className="text-foreground dark:text-white">
+              Name
+            </TableHead>
+            <TableHead className="text-foreground dark:text-white">
+              Email
+            </TableHead>
+            <TableHead className="text-foreground dark:text-white">
+              Status
+            </TableHead>
+            <TableHead className="text-foreground dark:text-white">
+              Role
+            </TableHead>
+            <TableHead className="text-foreground dark:text-white">
+              Last Login
+            </TableHead>
+            <TableHead className="text-foreground dark:text-white">
+              Created
+            </TableHead>
+            <TableHead className="w-12 text-foreground dark:text-white">
+              Actions
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {users.map((user) => (
+            <TableRow
+              key={user.id}
+              className="border-t dark:border-gray-700 hover:bg-muted/50 dark:hover:bg-gray-800/50"
+            >
+              <TableCell>
                 <Checkbox
-                  checked={
-                    selectedUsers.length === users.length && users.length > 0
+                  checked={selectedUsers.includes(user.id)}
+                  onCheckedChange={(checked) =>
+                    handleSelectUser(user.id, !!checked)
                   }
-                  onCheckedChange={(checked) => handleSelectAll(!!checked)}
                 />
-              </TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Last Login</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="w-12">Actions</TableHead>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`}
+                      alt={user.name}
+                    />
+                    <AvatarFallback>
+                      {user.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-foreground dark:text-white">
+                    {user.name}
+                  </span>
+                </div>
+              </TableCell>
+              <TableCell className="text-foreground dark:text-gray-300">
+                {user.email}
+              </TableCell>
+              <TableCell>{getStatusBadge(user.status)}</TableCell>
+              <TableCell>
+                <Badge
+                  variant="outline"
+                  className="capitalize dark:border-gray-600 dark:text-gray-300"
+                >
+                  {user.role}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-foreground dark:text-gray-300">
+                {user.lastLogin ? (
+                  formatDate(user.lastLogin)
+                ) : (
+                  <span className="text-muted-foreground dark:text-gray-500">
+                    Never
+                  </span>
+                )}
+              </TableCell>
+              <TableCell className="text-foreground dark:text-gray-300">
+                {formatDate(user.createdAt)}
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => onEdit(user.id)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => confirmDelete(user.id)}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() =>
+                        onChangeRole(
+                          user.id,
+                          user.role === "admin" ? "user" : "admin",
+                        )
+                      }
+                    >
+                      <Shield className="mr-2 h-4 w-4" />
+                      {user.role === "admin" ? "Remove Admin" : "Make Admin"}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        onChangeStatus(
+                          user.id,
+                          user.status === "blocked" ? "active" : "blocked",
+                        )
+                      }
+                    >
+                      {user.status === "blocked" ? (
+                        <>
+                          <Key className="mr-2 h-4 w-4" />
+                          Unblock User
+                        </>
+                      ) : (
+                        <>
+                          <Ban className="mr-2 h-4 w-4" />
+                          Block User
+                        </>
+                      )}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  <Checkbox
-                    checked={selectedUsers.includes(user.id)}
-                    onCheckedChange={(checked) =>
-                      handleSelectUser(user.id, !!checked)
-                    }
-                  />
-                </TableCell>
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{getStatusBadge(user.status)}</TableCell>
-                <TableCell>
-                  <Badge variant="outline" className="capitalize">
-                    {user.role}
-                  </Badge>
-                </TableCell>
-                <TableCell>{formatDate(user.lastLogin)}</TableCell>
-                <TableCell>{formatDate(user.createdAt)}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => onEdit(user.id)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => confirmDelete(user.id)}>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() =>
-                          onChangeRole(
-                            user.id,
-                            user.role === "admin" ? "user" : "admin",
-                          )
-                        }
-                      >
-                        <Shield className="mr-2 h-4 w-4" />
-                        {user.role === "admin" ? "Remove Admin" : "Make Admin"}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          onChangeStatus(
-                            user.id,
-                            user.status === "blocked" ? "active" : "blocked",
-                          )
-                        }
-                      >
-                        {user.status === "blocked" ? (
-                          <>
-                            <Key className="mr-2 h-4 w-4" />
-                            Unblock User
-                          </>
-                        ) : (
-                          <>
-                            <Ban className="mr-2 h-4 w-4" />
-                            Block User
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
 
-      <div className="flex items-center justify-between p-4 border-t">
-        <div className="text-sm text-gray-500">
+      <div className="flex items-center justify-between p-4 border-t dark:border-gray-700">
+        <div className="text-sm text-muted-foreground dark:text-gray-400">
           {selectedUsers.length > 0
             ? `${selectedUsers.length} selected`
             : `${users.length} users total`}

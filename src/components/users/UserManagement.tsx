@@ -233,10 +233,14 @@ const UserManagement = ({
   };
 
   return (
-    <div className="w-full h-full bg-background p-6 space-y-6">
+    <div className="w-full h-full bg-background dark:bg-gray-900 p-6 space-y-6">
       <div className="flex flex-col space-y-1.5">
-        <h2 className="text-2xl font-bold tracking-tight">User Management</h2>
-        <p className="text-muted-foreground">Manage users for {projectName}</p>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground dark:text-white">
+          User Management
+        </h2>
+        <p className="text-muted-foreground dark:text-gray-400">
+          Manage users for {projectName}
+        </p>
       </div>
 
       <div className="flex items-center justify-between">

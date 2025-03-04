@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -23,6 +23,7 @@ import {
   ChevronRight,
   LogOut,
   Plus,
+  ArrowLeft,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -41,6 +42,7 @@ const Sidebar = ({
   userAvatar = "",
 }: SidebarProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   // Mock projects data
@@ -62,10 +64,15 @@ const Sidebar = ({
     setActiveProject(activeProject === id ? null : id);
   };
 
+  const handleSelectProject = (id: string) => {
+    setActiveProject(activeProject === id ? null : id);
+    navigate(`/dashboard/project/${id}`);
+  };
+
   return (
     <div
       className={cn(
-        "flex flex-col h-full bg-background border-r transition-all duration-300",
+        "flex flex-col h-full bg-card dark:bg-gray-900 border-r border-border dark:border-gray-800 transition-all duration-300",
         collapsed ? "w-[70px]" : "w-[280px]",
       )}
     >
@@ -181,7 +188,12 @@ const Sidebar = ({
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-7 w-7">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => navigate("/dashboard/project/new")}
+                    >
                       <Plus className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -196,7 +208,7 @@ const Sidebar = ({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div
-                        onClick={() => toggleProject(project.id)}
+                        onClick={() => handleSelectProject(project.id)}
                         className={cn(
                           "flex items-center justify-between px-3 py-2 rounded-md cursor-pointer",
                           isProjectActive(project.id)
@@ -389,7 +401,11 @@ const Sidebar = ({
                   )}
                 </div>
                 {!collapsed && (
-                  <Button variant="ghost" size="icon">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate("/")}
+                  >
                     <LogOut className="h-5 w-5" />
                   </Button>
                 )}
