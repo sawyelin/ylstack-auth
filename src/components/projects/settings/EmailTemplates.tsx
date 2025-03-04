@@ -149,7 +149,7 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
           <h2 className="text-2xl font-semibold text-foreground dark:text-white">
             Email Templates
           </h2>
-          <p className="text-muted-foreground dark:text-gray-400">
+          <p className="text-muted-foreground dark:text-gray-300">
             Customize email templates for different user interactions
           </p>
         </div>
@@ -192,7 +192,7 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
                           <p className="font-medium text-sm text-foreground dark:text-white">
                             {template.name}
                           </p>
-                          <p className="text-xs text-muted-foreground dark:text-gray-400">
+                          <p className="text-xs text-muted-foreground dark:text-gray-300">
                             {template.type}
                           </p>
                         </div>
@@ -338,50 +338,50 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({
                   </h3>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex items-center gap-2">
-                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
+                      <code className="bg-muted dark:bg-gray-800 px-2 py-1 rounded text-xs text-foreground dark:text-gray-200">
                         {"{{name}}"}
                       </code>
-                      <span className="text-xs text-muted-foreground dark:text-gray-400">
+                      <span className="text-xs text-muted-foreground dark:text-gray-300">
                         User's name
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
+                      <code className="bg-muted dark:bg-gray-800 px-2 py-1 rounded text-xs text-foreground dark:text-gray-200">
                         {"{{email}}"}
                       </code>
-                      <span className="text-xs text-muted-foreground dark:text-gray-400">
+                      <span className="text-xs text-muted-foreground dark:text-gray-300">
                         User's email
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
+                      <code className="bg-muted dark:bg-gray-800 px-2 py-1 rounded text-xs text-foreground dark:text-gray-200">
                         {"{{verificationLink}}"}
                       </code>
-                      <span className="text-xs text-muted-foreground dark:text-gray-400">
+                      <span className="text-xs text-muted-foreground dark:text-gray-300">
                         Email verification URL
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
+                      <code className="bg-muted dark:bg-gray-800 px-2 py-1 rounded text-xs text-foreground dark:text-gray-200">
                         {"{{resetLink}}"}
                       </code>
-                      <span className="text-xs text-muted-foreground dark:text-gray-400">
+                      <span className="text-xs text-muted-foreground dark:text-gray-300">
                         Password reset URL
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
+                      <code className="bg-muted dark:bg-gray-800 px-2 py-1 rounded text-xs text-foreground dark:text-gray-200">
                         {"{{invitationLink}}"}
                       </code>
-                      <span className="text-xs text-muted-foreground dark:text-gray-400">
+                      <span className="text-xs text-muted-foreground dark:text-gray-300">
                         Invitation URL
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <code className="bg-muted dark:bg-gray-700 px-2 py-1 rounded text-xs text-foreground dark:text-gray-300">
+                      <code className="bg-muted dark:bg-gray-800 px-2 py-1 rounded text-xs text-foreground dark:text-gray-200">
                         {"{{inviterName}}"}
                       </code>
-                      <span className="text-xs text-muted-foreground dark:text-gray-400">
+                      <span className="text-xs text-muted-foreground dark:text-gray-300">
                         Inviter's name
                       </span>
                     </div>

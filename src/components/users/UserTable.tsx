@@ -171,19 +171,19 @@ const UserTable = ({
     switch (status) {
       case "active":
         return (
-          <Badge className="bg-green-500 dark:bg-green-600 text-white">
+          <Badge className="bg-green-600 dark:bg-green-800 text-white">
             Active
           </Badge>
         );
       case "pending":
         return (
-          <Badge className="bg-yellow-500 dark:bg-yellow-600 text-white">
+          <Badge className="bg-yellow-600 dark:bg-yellow-800 text-white">
             Pending
           </Badge>
         );
       case "blocked":
         return (
-          <Badge className="bg-red-500 dark:bg-red-600 text-white">
+          <Badge className="bg-red-600 dark:bg-red-800 text-white">
             Blocked
           </Badge>
         );
@@ -258,19 +258,19 @@ const UserTable = ({
                   </span>
                 </div>
               </TableCell>
-              <TableCell className="text-foreground dark:text-gray-300">
+              <TableCell className="text-foreground dark:text-gray-200">
                 {user.email}
               </TableCell>
               <TableCell>{getStatusBadge(user.status)}</TableCell>
               <TableCell>
                 <Badge
                   variant="outline"
-                  className="capitalize dark:border-gray-600 dark:text-gray-300"
+                  className="capitalize dark:border-gray-700 dark:text-gray-200"
                 >
                   {user.role}
                 </Badge>
               </TableCell>
-              <TableCell className="text-foreground dark:text-gray-300">
+              <TableCell className="text-foreground dark:text-gray-200">
                 {user.lastLogin ? (
                   formatDate(user.lastLogin)
                 ) : (
@@ -279,7 +279,7 @@ const UserTable = ({
                   </span>
                 )}
               </TableCell>
-              <TableCell className="text-foreground dark:text-gray-300">
+              <TableCell className="text-foreground dark:text-gray-200">
                 {formatDate(user.createdAt)}
               </TableCell>
               <TableCell>
@@ -341,7 +341,7 @@ const UserTable = ({
       </Table>
 
       <div className="flex items-center justify-between p-4 border-t dark:border-gray-700">
-        <div className="text-sm text-muted-foreground dark:text-gray-400">
+        <div className="text-sm text-muted-foreground dark:text-gray-300">
           {selectedUsers.length > 0
             ? `${selectedUsers.length} selected`
             : `${users.length} users total`}

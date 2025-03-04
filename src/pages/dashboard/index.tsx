@@ -111,7 +111,7 @@ const Dashboard = ({
             <h1 className="text-3xl font-bold text-foreground dark:text-white">
               Welcome back, {userName.split(" ")[0]}
             </h1>
-            <p className="text-muted-foreground dark:text-gray-400 mt-1">
+            <p className="text-muted-foreground dark:text-gray-300 mt-1">
               Here's what's happening with your authentication projects
             </p>
           </div>
@@ -145,7 +145,7 @@ const Dashboard = ({
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground dark:text-gray-400">
+                      <p className="text-sm font-medium text-muted-foreground dark:text-gray-300">
                         {stat.name}
                       </p>
                       <h3 className="text-2xl font-bold mt-1 text-foreground dark:text-white">
@@ -157,7 +157,7 @@ const Dashboard = ({
                         {stat.change}
                       </p>
                     </div>
-                    <div className="h-12 w-12 rounded-full bg-primary/10 dark:bg-gray-700 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 dark:bg-gray-800 flex items-center justify-center">
                       {stat.icon}
                     </div>
                   </div>
@@ -189,13 +189,13 @@ const Dashboard = ({
                 />
               </TabsContent>
               <TabsContent value="recent" className="m-0 p-6">
-                <div className="h-[400px] flex items-center justify-center bg-muted dark:bg-gray-800/50 rounded-md">
+                <div className="h-[400px] flex items-center justify-center bg-muted dark:bg-gray-900/50 rounded-md">
                   <div className="text-center">
-                    <BarChart3 className="h-12 w-12 text-muted-foreground dark:text-gray-600 mx-auto mb-4" />
+                    <BarChart3 className="h-12 w-12 text-muted-foreground dark:text-gray-500 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-foreground dark:text-white mb-2">
                       Recent Activity
                     </h3>
-                    <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md">
+                    <p className="text-sm text-muted-foreground dark:text-gray-300 max-w-md">
                       View your recent authentication activity across all
                       projects. This section will show login attempts, user
                       registrations, and other events.
@@ -208,13 +208,13 @@ const Dashboard = ({
                 </div>
               </TabsContent>
               <TabsContent value="analytics" className="m-0 p-6">
-                <div className="h-[400px] flex items-center justify-center bg-muted dark:bg-gray-800/50 rounded-md">
+                <div className="h-[400px] flex items-center justify-center bg-muted dark:bg-gray-900/50 rounded-md">
                   <div className="text-center">
-                    <BarChart3 className="h-12 w-12 text-muted-foreground dark:text-gray-600 mx-auto mb-4" />
+                    <BarChart3 className="h-12 w-12 text-muted-foreground dark:text-gray-500 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-foreground dark:text-white mb-2">
                       Analytics Dashboard
                     </h3>
-                    <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md">
+                    <p className="text-sm text-muted-foreground dark:text-gray-300 max-w-md">
                       Get insights into your authentication platform usage, user
                       behavior, and performance metrics across all your
                       projects.
