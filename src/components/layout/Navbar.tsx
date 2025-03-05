@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,15 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  Moon,
-  Sun,
-  Menu,
-  Shield,
-  LogIn,
-  UserPlus,
-  ChevronDown,
-} from "lucide-react";
+import { Menu, Shield, LogIn, UserPlus, ChevronDown } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface NavbarProps {
   user?: {
@@ -39,34 +32,7 @@ const Navbar = ({
   onLogout = () => {},
 }: NavbarProps) => {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Initialize theme based on system preference or saved preference
-  useEffect(() => {
-    // Check if dark mode is preferred or previously set
-    if (document.documentElement.classList.contains("dark")) {
-      setTheme("dark");
-    } else if (
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ) {
-      setTheme("dark");
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  };
 
   const handleLogin = () => {
     if (onLogin) {
@@ -100,7 +66,7 @@ const Navbar = ({
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-gray-900 dark:border-gray-800">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-gray-800">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
@@ -120,6 +86,20 @@ const Navbar = ({
               key={item.label}
               href={item.href}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              onClick={(e) => {
+                e.preventDefault();
+                if (item.label === "Features") {
+                  const featuresSection = document.getElementById("features");
+                  if (featuresSection)
+                    featuresSection.scrollIntoView({ behavior: "smooth" });
+                } else if (item.label === "Pricing") {
+                  navigate("/pricing");
+                } else if (item.label === "Documentation") {
+                  window.location.href = "#docs";
+                } else if (item.label === "Blog") {
+                  navigate("/blog");
+                }
+              }}
             >
               {item.label}
             </a>
@@ -128,18 +108,7 @@ const Navbar = ({
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? (
-              <Moon className="h-5 w-5" />
-            ) : (
-              <Sun className="h-5 w-5" />
-            )}
-          </Button>
+          <ThemeToggle />
 
           {user ? (
             <DropdownMenu>
@@ -186,11 +155,14 @@ const Navbar = ({
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={handleLogin}>
+              <Button variant="ghost" onClick={() => navigate("/login")}>
                 <LogIn className="mr-2 h-4 w-4" />
                 Login
               </Button>
-              <Button onClick={handleSignup}>
+              <Button
+                onClick={() => navigate("/signup")}
+                className="bg-primary hover:bg-primary/90"
+              >
                 <UserPlus className="mr-2 h-4 w-4" />
                 Sign Up
               </Button>
@@ -200,18 +172,7 @@ const Navbar = ({
 
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? (
-              <Moon className="h-5 w-5" />
-            ) : (
-              <Sun className="h-5 w-5" />
-            )}
-          </Button>
+          <ThemeToggle />
 
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -238,7 +199,24 @@ const Navbar = ({
                       key={item.label}
                       href={item.href}
                       className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setMobileMenuOpen(false);
+                        if (item.label === "Features") {
+                          const featuresSection =
+                            document.getElementById("features");
+                          if (featuresSection)
+                            featuresSection.scrollIntoView({
+                              behavior: "smooth",
+                            });
+                        } else if (item.label === "Pricing") {
+                          navigate("/pricing");
+                        } else if (item.label === "Documentation") {
+                          window.location.href = "#docs";
+                        } else if (item.label === "Blog") {
+                          navigate("/blog");
+                        }
+                      }}
                     >
                       {item.label}
                     </a>
@@ -308,17 +286,17 @@ const Navbar = ({
                         className="w-full"
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          handleLogin();
+                          navigate("/login");
                         }}
                       >
                         <LogIn className="mr-2 h-4 w-4" />
                         Login
                       </Button>
                       <Button
-                        className="w-full"
+                        className="w-full bg-primary hover:bg-primary/90"
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          handleSignup();
+                          navigate("/signup");
                         }}
                       >
                         <UserPlus className="mr-2 h-4 w-4" />

@@ -1,9 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./layout/Navbar";
 import AuthCard from "./auth/AuthCard";
+import { Button } from "./ui/button";
+import {
+  AnimatedBorder,
+  AnimatedGradientBorder,
+  AnimatedPathBorder,
+} from "./ui/animated-border";
+import {
+  BackgroundGradient,
+  BackgroundPattern,
+  BackgroundBlobs,
+} from "./ui/background-gradient";
+import { Shield, ArrowRight, CheckCircle, ExternalLink } from "lucide-react";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<{
     name: string;
     email: string;
@@ -40,13 +54,17 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-background dark:bg-gray-950">
       <Navbar user={user} onLogout={handleLogout} />
 
       <main className="flex-1 flex flex-col">
         {/* Hero Section */}
-        <section className="py-16 md:py-24 lg:py-32 px-4">
-          <div className="container mx-auto max-w-7xl">
+        <section className="relative py-16 md:py-24 lg:py-32 px-4 overflow-hidden">
+          <BackgroundGradient variant="purple" />
+          <BackgroundPattern />
+          <BackgroundBlobs />
+
+          <div className="container relative z-10 mx-auto max-w-7xl">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -54,27 +72,46 @@ const Home = () => {
                 transition={{ duration: 0.5 }}
                 className="space-y-6"
               >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground dark:text-white">
                   Secure Authentication for Your Applications
                 </h1>
-                <p className="text-xl text-gray-600 max-w-2xl">
+                <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-2xl">
                   A comprehensive authentication platform with multi-project
                   support, custom admin panels, and powerful user management
                   capabilities.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <a
-                    href="#features"
-                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                  >
-                    Explore Features
-                  </a>
-                  <a
-                    href="#docs"
-                    className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                  >
-                    View Documentation
-                  </a>
+                  <AnimatedGradientBorder>
+                    <Button
+                      size="lg"
+                      className="w-full bg-background dark:bg-gray-900 text-foreground dark:text-white hover:bg-muted/50 dark:hover:bg-gray-800/50"
+                      onClick={() => {
+                        const featuresSection =
+                          document.getElementById("features");
+                        if (featuresSection)
+                          featuresSection.scrollIntoView({
+                            behavior: "smooth",
+                          });
+                      }}
+                    >
+                      Explore Features
+                    </Button>
+                  </AnimatedGradientBorder>
+                  <AnimatedPathBorder>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        const docsSection = document.getElementById("docs");
+                        if (docsSection)
+                          docsSection.scrollIntoView({ behavior: "smooth" });
+                        else window.location.href = "#docs";
+                      }}
+                    >
+                      View Documentation
+                    </Button>
+                  </AnimatedPathBorder>
                 </div>
               </motion.div>
 
@@ -84,26 +121,54 @@ const Home = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="flex justify-center"
               >
-                <div className="w-full max-w-md">
+                <AnimatedBorder
+                  className="p-0"
+                  containerClassName="w-full max-w-md"
+                >
                   <AuthCard
                     initialView="login"
                     onLogin={handleLogin}
                     onSignup={handleSignup}
                   />
-                </div>
+                </AnimatedBorder>
               </motion.div>
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-16 bg-white px-4">
-          <div className="container mx-auto max-w-7xl">
+        <section
+          id="features"
+          className="relative py-16 px-4 bg-muted/50 dark:bg-gray-900/80 backdrop-blur-sm"
+        >
+          <svg
+            className="absolute inset-0 -z-10 h-full w-full stroke-gray-200 dark:stroke-gray-800 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+            aria-hidden="true"
+          >
+            <defs>
+              <pattern
+                id="grid-pattern"
+                width="40"
+                height="40"
+                patternUnits="userSpaceOnUse"
+              >
+                <path d="M.5 40V.5H40" fill="none" />
+              </pattern>
+            </defs>
+            <rect
+              width="100%"
+              height="100%"
+              strokeWidth="0"
+              fill="url(#grid-pattern)"
+            />
+          </svg>
+
+          <div className="container relative z-10 mx-auto max-w-7xl">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-foreground dark:text-white mb-4">
                 Powerful Authentication Features
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
                 Everything you need to build secure, scalable authentication for
                 your applications
               </p>
@@ -117,49 +182,212 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
                 >
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <AnimatedGradientBorder containerClassName="h-full">
+                    <div className="bg-card dark:bg-gray-800/90 backdrop-blur-sm p-6 rounded-lg h-full">
+                      <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                        {feature.icon}
+                      </div>
+                      <h3 className="text-xl font-semibold text-foreground dark:text-white mb-2">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground dark:text-gray-300">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </AnimatedGradientBorder>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-16 bg-primary/5 px-4">
+        {/* Pricing Section */}
+        <section id="pricing" className="py-16 px-4 relative overflow-hidden">
+          <BackgroundGradient variant="blue" />
+
+          <div className="container relative z-10 mx-auto max-w-7xl">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-foreground dark:text-white mb-4">
+                Simple, Transparent Pricing
+              </h2>
+              <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
+                Choose the plan that fits your needs
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {pricingPlans.map((plan, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <AnimatedBorder containerClassName="h-full">
+                    <div className="bg-card dark:bg-gray-800/90 backdrop-blur-sm p-6 rounded-lg h-full flex flex-col">
+                      <div className="mb-6">
+                        <h3 className="text-xl font-semibold text-foreground dark:text-white mb-2">
+                          {plan.name}
+                        </h3>
+                        <div className="flex items-baseline">
+                          <span className="text-3xl font-bold text-foreground dark:text-white">
+                            ${plan.price}
+                          </span>
+                          <span className="text-sm text-muted-foreground dark:text-gray-400 ml-1">
+                            /month
+                          </span>
+                        </div>
+                        <p className="text-muted-foreground dark:text-gray-300 mt-2">
+                          {plan.description}
+                        </p>
+                      </div>
+
+                      <ul className="space-y-3 mb-6 flex-grow">
+                        {plan.features.map((feature, i) => (
+                          <li key={i} className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                            <span className="text-foreground dark:text-gray-200">
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Button
+                        className={`w-full ${plan.featured ? "bg-primary hover:bg-primary/90" : "bg-muted/50 dark:bg-gray-700 hover:bg-muted dark:hover:bg-gray-600"}`}
+                        onClick={() => navigate("/signup")}
+                      >
+                        Get Started
+                      </Button>
+                    </div>
+                  </AnimatedBorder>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Blog Section */}
+        <section
+          id="blog"
+          className="py-16 px-4 bg-muted/30 dark:bg-gray-900/50"
+        >
           <div className="container mx-auto max-w-7xl">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-foreground dark:text-white mb-4">
+                Latest from our Blog
+              </h2>
+              <p className="text-xl text-muted-foreground dark:text-gray-300 max-w-3xl mx-auto">
+                Learn about authentication best practices and industry insights
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {blogPosts.map((post, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <AnimatedPathBorder containerClassName="h-full">
+                    <div className="bg-card dark:bg-gray-800 p-6 rounded-lg h-full flex flex-col">
+                      <div className="aspect-video rounded-md overflow-hidden mb-4 bg-muted dark:bg-gray-700">
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-grow">
+                        <div className="flex items-center mb-2">
+                          <span className="text-xs text-muted-foreground dark:text-gray-400">
+                            {post.date}
+                          </span>
+                          <span className="mx-2 text-muted-foreground dark:text-gray-500">
+                            •
+                          </span>
+                          <span className="text-xs text-muted-foreground dark:text-gray-400">
+                            {post.readTime}
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-semibold text-foreground dark:text-white mb-2">
+                          {post.title}
+                        </h3>
+                        <p className="text-muted-foreground dark:text-gray-300 mb-4">
+                          {post.excerpt}
+                        </p>
+                      </div>
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto justify-start text-primary"
+                        onClick={() =>
+                          window.open(
+                            `/blog#${post.title.toLowerCase().replace(/\s+/g, "-")}`,
+                            "_blank",
+                          )
+                        }
+                      >
+                        Read More <ExternalLink className="ml-1 h-3 w-3" />
+                      </Button>
+                    </div>
+                  </AnimatedPathBorder>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-12 text-center">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate("/blog")}
+              >
+                View All Articles
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="relative py-16 px-4 overflow-hidden">
+          <BackgroundGradient variant="green" />
+
+          <div className="container relative z-10 mx-auto max-w-7xl">
+            <div className="bg-card/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden">
               <div className="grid grid-cols-1 lg:grid-cols-2">
                 <div className="p-8 md:p-12 lg:px-16 lg:py-24">
                   <div className="mx-auto max-w-xl">
-                    <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">
+                    <h2 className="text-3xl font-bold text-foreground dark:text-white md:text-4xl">
                       Ready to secure your applications?
                     </h2>
-                    <p className="mt-4 text-lg text-gray-600">
+                    <p className="mt-4 text-lg text-muted-foreground dark:text-gray-300">
                       Get started with our authentication platform today and
                       provide your users with a seamless, secure login
                       experience.
                     </p>
                     <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                      <a
-                        href="#"
-                        className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                      >
-                        Get Started
-                      </a>
-                      <a
-                        href="#"
-                        className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                      <AnimatedBorder>
+                        <Button
+                          size="lg"
+                          className="w-full bg-background dark:bg-gray-900 text-foreground dark:text-white hover:bg-muted/50 dark:hover:bg-gray-800/50"
+                          onClick={() => navigate("/signup")}
+                        >
+                          Get Started
+                        </Button>
+                      </AnimatedBorder>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-primary/20 dark:border-primary/30"
+                        onClick={() =>
+                          window.open("mailto:sales@authplatform.com")
+                        }
                       >
                         Contact Sales
-                      </a>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -191,7 +419,7 @@ const Home = () => {
               <ul className="space-y-2">
                 <li>
                   <a
-                    href="#"
+                    href="#features"
                     className="text-gray-400 hover:text-white transition-colors"
                   >
                     Features
@@ -199,7 +427,7 @@ const Home = () => {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="#pricing"
                     className="text-gray-400 hover:text-white transition-colors"
                   >
                     Pricing
@@ -207,7 +435,7 @@ const Home = () => {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="#docs"
                     className="text-gray-400 hover:text-white transition-colors"
                   >
                     Documentation
@@ -228,7 +456,7 @@ const Home = () => {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="#blog"
                     className="text-gray-400 hover:text-white transition-colors"
                   >
                     Blog
@@ -276,7 +504,7 @@ const Home = () => {
           </div>
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400">
-              © 2023 AuthPlatform. All rights reserved.
+              © {new Date().getFullYear()} AuthPlatform. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a
@@ -464,6 +692,82 @@ const features = [
         />
       </svg>
     ),
+  },
+];
+
+// Pricing plans data
+const pricingPlans = [
+  {
+    name: "Starter",
+    price: "0",
+    description: "Perfect for side projects and small applications",
+    features: [
+      "Up to 1,000 monthly active users",
+      "Email/password authentication",
+      "Basic user management",
+      "Community support",
+      "1 project",
+    ],
+    featured: false,
+  },
+  {
+    name: "Professional",
+    price: "49",
+    description: "For growing businesses and applications",
+    features: [
+      "Up to 10,000 monthly active users",
+      "Social login providers",
+      "Multi-factor authentication",
+      "Custom email templates",
+      "Priority support",
+      "5 projects",
+    ],
+    featured: true,
+  },
+  {
+    name: "Enterprise",
+    price: "199",
+    description: "For large-scale applications and organizations",
+    features: [
+      "Unlimited monthly active users",
+      "Advanced security features",
+      "Custom branding",
+      "SSO integration",
+      "Dedicated support",
+      "Unlimited projects",
+    ],
+    featured: false,
+  },
+];
+
+// Blog posts data
+const blogPosts = [
+  {
+    title: "Implementing Secure Authentication in React Applications",
+    excerpt:
+      "Learn how to implement secure authentication flows in your React applications using our platform.",
+    date: "June 12, 2023",
+    readTime: "5 min read",
+    image:
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+  },
+  {
+    title: "The Future of Passwordless Authentication",
+    excerpt:
+      "Explore the latest trends in passwordless authentication and how they're changing the security landscape.",
+    date: "May 28, 2023",
+    readTime: "7 min read",
+    image:
+      "https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80",
+  },
+  {
+    title: "Multi-Factor Authentication Best Practices",
+    excerpt:
+      "Discover the best practices for implementing multi-factor authentication in your applications.",
+    date: "May 15, 2023",
+    readTime: "6 min read",
+    image:
+      "https://images.unsplash.com/photo-1496096265110-f83ad7f96608?w=800&q=80",
   },
 ];
 

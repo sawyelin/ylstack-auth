@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 
@@ -52,6 +54,9 @@ const AuthCard = ({
   const [email, setEmail] = useState(userEmail);
   const [authError, setAuthError] = useState(error);
   const [isLoading, setIsLoading] = useState(loading);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [mfaCode, setMfaCode] = useState("");
 
   // Animation variants for smooth transitions
   const variants = {
@@ -138,6 +143,45 @@ const AuthCard = ({
     }
   };
 
+  // Handle reset password submission
+  const handleResetPassword = async () => {
+    if (password !== confirmPassword) {
+      setAuthError("Passwords do not match");
+      return;
+    }
+
+    setIsLoading(true);
+    setAuthError("");
+
+    try {
+      await onResetPassword(password);
+      changeView("login", -1);
+    } catch (err) {
+      setAuthError(
+        err instanceof Error ? err.message : "Failed to reset password",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle MFA verification
+  const handleVerifyMfa = async () => {
+    setIsLoading(true);
+    setAuthError("");
+
+    try {
+      await onVerifyMfa(mfaCode);
+      // Successful verification would typically redirect
+    } catch (err) {
+      setAuthError(
+        err instanceof Error ? err.message : "Failed to verify code",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Render the appropriate form based on current view
   const renderAuthForm = () => {
     switch (currentView) {
@@ -161,133 +205,159 @@ const AuthCard = ({
       case "forgot-password":
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Reset Password</h2>
-            <p className="mb-4">
+            <h2 className="text-2xl font-bold mb-4 text-foreground dark:text-white">
+              Reset Password
+            </h2>
+            <p className="mb-4 text-muted-foreground dark:text-gray-300">
               Enter your email to receive a password reset link
             </p>
             <div className="space-y-4">
-              <input
+              <Input
                 type="email"
                 placeholder="Email address"
-                className="w-full p-2 border rounded"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <div className="flex justify-between">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => changeView("login", -1)}
-                  className="text-sm text-gray-600 hover:underline"
+                  className="text-sm"
                 >
                   Back to login
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleForgotPassword(email)}
-                  className="px-4 py-2 bg-primary text-white rounded"
                   disabled={isLoading}
+                  className="bg-primary hover:bg-primary/90"
                 >
                   {isLoading ? "Sending..." : "Send Reset Link"}
-                </button>
+                </Button>
               </div>
-              {authError && <p className="text-red-500 text-sm">{authError}</p>}
+              {authError && (
+                <p className="text-destructive text-sm">{authError}</p>
+              )}
             </div>
           </div>
         );
       case "reset-password":
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Set New Password</h2>
-            <p className="mb-4">Create a new password for your account</p>
+            <h2 className="text-2xl font-bold mb-4 text-foreground dark:text-white">
+              Set New Password
+            </h2>
+            <p className="mb-4 text-muted-foreground dark:text-gray-300">
+              Create a new password for your account
+            </p>
             <div className="space-y-4">
-              <input
+              <Input
                 type="password"
                 placeholder="New password"
-                className="w-full p-2 border rounded"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
-              <input
+              <Input
                 type="password"
                 placeholder="Confirm new password"
-                className="w-full p-2 border rounded"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
               <div className="flex justify-between">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => changeView("login", -1)}
-                  className="text-sm text-gray-600 hover:underline"
+                  className="text-sm"
                 >
                   Back to login
-                </button>
-                <button
-                  onClick={() => onResetPassword("new-password")}
-                  className="px-4 py-2 bg-primary text-white rounded"
+                </Button>
+                <Button
+                  onClick={handleResetPassword}
                   disabled={isLoading}
+                  className="bg-primary hover:bg-primary/90"
                 >
                   {isLoading ? "Resetting..." : "Reset Password"}
-                </button>
+                </Button>
               </div>
+              {authError && (
+                <p className="text-destructive text-sm">{authError}</p>
+              )}
             </div>
           </div>
         );
       case "mfa-verification":
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">
+            <h2 className="text-2xl font-bold mb-4 text-foreground dark:text-white">
               Two-Factor Authentication
             </h2>
-            <p className="mb-4">
+            <p className="mb-4 text-muted-foreground dark:text-gray-300">
               Enter the verification code sent to your device
             </p>
             <div className="space-y-4">
-              <input
+              <Input
                 type="text"
                 placeholder="6-digit code"
-                className="w-full p-2 border rounded"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+                maxLength={6}
               />
               <div className="flex justify-between">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => changeView("login", -1)}
-                  className="text-sm text-gray-600 hover:underline"
+                  className="text-sm"
                 >
                   Back to login
-                </button>
-                <button
-                  onClick={() => onVerifyMfa("123456")}
-                  className="px-4 py-2 bg-primary text-white rounded"
+                </Button>
+                <Button
+                  onClick={handleVerifyMfa}
                   disabled={isLoading}
+                  className="bg-primary hover:bg-primary/90"
                 >
                   {isLoading ? "Verifying..." : "Verify Code"}
-                </button>
+                </Button>
               </div>
-              <button
+              <Button
+                variant="link"
                 onClick={onResendVerification}
-                className="text-sm text-primary hover:underline w-full text-center"
+                className="text-sm w-full"
               >
                 Resend code
-              </button>
-              {authError && <p className="text-red-500 text-sm">{authError}</p>}
+              </Button>
+              {authError && (
+                <p className="text-destructive text-sm">{authError}</p>
+              )}
             </div>
           </div>
         );
       case "email-verification":
         return (
           <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Verify Your Email</h2>
-            <p className="mb-4">We've sent a verification link to {email}</p>
+            <h2 className="text-2xl font-bold mb-4 text-foreground dark:text-white">
+              Verify Your Email
+            </h2>
+            <p className="mb-4 text-muted-foreground dark:text-gray-300">
+              We've sent a verification link to {email}
+            </p>
             <div className="space-y-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground dark:text-gray-300">
                 Please check your inbox and click the verification link to
                 complete your registration.
               </p>
-              <button
+              <Button
+                variant="link"
                 onClick={onResendVerification}
-                className="text-sm text-primary hover:underline w-full text-center"
+                className="text-sm w-full"
               >
                 Resend verification email
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => changeView("signup", -1)}
-                className="text-sm text-gray-600 hover:underline w-full text-center"
+                className="text-sm w-full"
               >
                 Use a different email
-              </button>
+              </Button>
             </div>
           </div>
         );
@@ -304,7 +374,7 @@ const AuthCard = ({
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto overflow-hidden bg-white shadow-lg border border-gray-200">
+    <Card className="w-full max-w-md mx-auto overflow-hidden bg-card dark:bg-gray-800 shadow-lg border border-border dark:border-gray-700">
       <CardContent className="p-0">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -326,9 +396,9 @@ const AuthCard = ({
 
         {/* Footer with links to switch between login and signup */}
         {(currentView === "login" || currentView === "signup") && (
-          <div className="p-6 text-center border-t">
+          <div className="p-6 text-center border-t border-border dark:border-gray-700">
             {currentView === "login" ? (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground dark:text-gray-300">
                 Don't have an account?{" "}
                 <button
                   onClick={() => changeView("signup", 1)}
@@ -338,7 +408,7 @@ const AuthCard = ({
                 </button>
               </p>
             ) : (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground dark:text-gray-300">
                 Already have an account?{" "}
                 <button
                   onClick={() => changeView("login", -1)}

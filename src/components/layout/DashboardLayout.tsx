@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import {
   Home,
   Settings,
@@ -134,7 +135,7 @@ const DashboardLayout = ({
           <Button
             key={index}
             variant="ghost"
-            className={`w-full ${sidebarCollapsed ? "justify-center" : "justify-start"} ${window.location.pathname === item.path ? "bg-secondary/50 text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`w-full ${sidebarCollapsed ? "justify-center" : "justify-start"} ${window.location.pathname === item.path ? "bg-primary/10 dark:bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50 dark:hover:bg-gray-800/50"}`}
             onClick={() => navigate(item.path)}
           >
             {item.icon}
@@ -225,6 +226,7 @@ const DashboardLayout = ({
       </div>
 
       <div className="flex items-center gap-4">
+        <ThemeToggle />
         <Button
           variant="ghost"
           size="icon"

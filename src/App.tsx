@@ -5,6 +5,10 @@ import Dashboard from "./pages/dashboard";
 import ProjectDashboard from "./pages/dashboard/project/[id]/index";
 import ProjectSettings from "./pages/dashboard/project/[id]/settings";
 import ProjectUsers from "./pages/dashboard/project/[id]/users";
+import LoginPage from "./components/pages/login";
+import SignupPage from "./components/pages/signup";
+import PricingPage from "./components/pages/pricing";
+import BlogPage from "./components/pages/blog";
 
 // Lazy load additional pages
 const UsersPage = lazy(() => import("./pages/dashboard/users"));
@@ -27,6 +31,10 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/blog" element={<BlogPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/project/:id" element={<ProjectDashboard />} />
           <Route
