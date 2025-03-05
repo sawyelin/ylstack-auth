@@ -1,48 +1,29 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Shield, ArrowRight, Smartphone, Clock } from "lucide-react";
-import { motion } from "framer-motion";
+import { ShimmerEffect } from "@/components/ui/shimmer-effect";
+import { Shield, ArrowLeft, RefreshCw, Clock } from "lucide-react";
 
 interface MfaVerificationProps {
-  email?: string;
-  onVerify?: (code: string) => void;
-  onCancel?: () => void;
-  onResend?: () => void;
+  onVerify: (code: string) => Promise<void>;
+  onResendCode: () => Promise<void>;
+  onBackToLogin: () => void;
   loading?: boolean;
   error?: string;
 }
 
 const MfaVerification = ({
-  email = "user@example.com",
-  onVerify = () => {},
-  onCancel = () => {},
-  onResend = () => {},
+  onVerify,
+  onResendCode,
+  onBackToLogin,
   loading = false,
   error = "",
 }: MfaVerificationProps) => {
-  const [code, setCode] = useState<string>("");
-  const [timeLeft, setTimeLeft] = useState<number>(60);
-  const [canResend, setCanResend] = useState<boolean>(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [codeValues, setCodeValues] = useState<string[]>([
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ]);
+  const [code, setCode] = useState("");
+  const [timeLeft, setTimeLeft] = useState(60); // 60 seconds countdown
+  const [canResend, setCanResend] = useState(false);
+  const [resending, setResending] = useState(false);
 
   // Timer for code expiration
   useEffect(() => {
@@ -61,197 +42,124 @@ const MfaVerification = ({
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  // Handle individual code input
-  const handleCodeChange = (index: number, value: string) => {
-    // Only allow numbers
-    if (value && !/^\d+$/.test(value)) return;
-
-    const newCodeValues = [...codeValues];
-
-    // Handle paste event (multiple digits)
-    if (value.length > 1) {
-      const digits = value.split("").slice(0, 6);
-      const newValues = [...codeValues];
-
-      digits.forEach((digit, idx) => {
-        if (idx + index < 6) {
-          newValues[idx + index] = digit;
-        }
-      });
-
-      setCodeValues(newValues);
-      setCode(newValues.join(""));
-
-      // Focus on the appropriate input after paste
-      const focusIndex = Math.min(index + digits.length, 5);
-      inputRefs.current[focusIndex]?.focus();
-      return;
-    }
-
-    // Handle single digit input
-    newCodeValues[index] = value;
-    setCodeValues(newCodeValues);
-    setCode(newCodeValues.join(""));
-
-    // Auto-focus next input if value is entered
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  // Handle backspace key
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === "Backspace" && !codeValues[index] && index > 0) {
-      // Focus previous input when backspace is pressed on an empty input
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (code.length === 6) {
-      onVerify(code);
+      await onVerify(code);
     }
   };
 
-  // Handle resend code
-  const handleResend = () => {
-    onResend();
-    setTimeLeft(60);
-    setCanResend(false);
-    setCodeValues(["", "", "", "", "", ""]);
-    setCode("");
-    inputRefs.current[0]?.focus();
+  const handleResend = async () => {
+    if (!canResend || resending) return;
+
+    setResending(true);
+    try {
+      await onResendCode();
+      setTimeLeft(60);
+      setCanResend(false);
+      setCode("");
+    } finally {
+      setResending(false);
+    }
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto bg-white shadow-md border border-gray-200">
-      <CardHeader className="space-y-1">
-        <div className="flex items-center justify-center mb-2">
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Shield className="h-6 w-6 text-primary" />
+    <div className="p-6 bg-card dark:bg-gray-800/90 backdrop-blur-sm">
+      <div className="flex justify-center mb-4">
+        <div className="w-16 h-16 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center">
+          <Shield className="h-8 w-8 text-primary dark:text-primary-foreground" />
+        </div>
+      </div>
+
+      <h2 className="text-2xl font-bold mb-4 text-foreground dark:text-white text-center">
+        Two-Factor Authentication
+      </h2>
+      <p className="mb-6 text-muted-foreground dark:text-gray-300 text-center">
+        Enter the verification code sent to your device
+      </p>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label
+            htmlFor="code"
+            className="text-foreground dark:text-gray-200 text-center block"
+          >
+            Verification Code
+          </Label>
+          <Input
+            id="code"
+            type="text"
+            inputMode="numeric"
+            placeholder="Enter 6-digit code"
+            value={code}
+            onChange={(e) => {
+              // Only allow numbers
+              const value = e.target.value.replace(/[^0-9]/g, "");
+              if (value.length <= 6) {
+                setCode(value);
+              }
+            }}
+            maxLength={6}
+            required
+            className="bg-background dark:bg-gray-900 border-border dark:border-gray-700 text-center text-lg tracking-widest font-mono"
+          />
+
+          <div className="flex items-center justify-center text-sm mt-2">
+            <Clock className="mr-1 h-4 w-4 text-muted-foreground dark:text-gray-400" />
+            <span className="text-muted-foreground dark:text-gray-400">
+              {canResend
+                ? "Code expired"
+                : `Code expires in ${formatTime(timeLeft)}`}
+            </span>
           </div>
         </div>
-        <CardTitle className="text-2xl font-bold text-center">
-          Two-Factor Authentication
-        </CardTitle>
-        <CardDescription className="text-center">
-          Enter the 6-digit code sent to {email}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-6">
-            <div className="space-y-4">
-              <div className="flex justify-center">
-                <Smartphone className="mr-2 h-5 w-5 text-muted-foreground" />
-                <Label htmlFor="code" className="text-muted-foreground">
-                  Authentication Code
-                </Label>
-              </div>
 
-              <div className="flex justify-center gap-2">
-                {codeValues.map((value, index) => (
-                  <Input
-                    key={index}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={6} // Allow paste of full code
-                    value={value}
-                    onChange={(e) => handleCodeChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-10 h-12 text-center text-lg font-semibold"
-                    autoFocus={index === 0}
-                  />
-                ))}
-              </div>
+        {error && (
+          <p className="text-sm text-destructive dark:text-red-400 text-center">
+            {error}
+          </p>
+        )}
 
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-sm text-destructive text-center"
-                >
-                  {error}
-                </motion.p>
-              )}
-
-              <div className="flex items-center justify-center text-sm">
-                <Clock className="mr-1 h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">
-                  {canResend
-                    ? "Code expired"
-                    : `Code expires in ${formatTime(timeLeft)}`}
-                </span>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={code.length !== 6 || loading}
-            >
-              {loading ? (
-                <span className="flex items-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Verifying...
-                </span>
-              ) : (
-                <span className="flex items-center">
-                  Verify Code
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </span>
-              )}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-      <Separator />
-      <CardFooter className="flex flex-col space-y-4 pt-4">
-        <div className="flex justify-between w-full text-sm">
+        <ShimmerEffect>
           <Button
-            variant="link"
-            onClick={onCancel}
-            className="px-0 text-muted-foreground"
+            type="submit"
+            disabled={loading || code.length !== 6}
+            className="w-full bg-primary/90 dark:bg-primary/80 text-primary-foreground hover:bg-primary/70 dark:hover:bg-primary/60"
           >
+            {loading ? "Verifying..." : "Verify Code"}
+          </Button>
+        </ShimmerEffect>
+
+        <div className="flex justify-between pt-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onBackToLogin}
+            className="text-muted-foreground dark:text-gray-300 hover:text-foreground dark:hover:text-white flex items-center"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Back to login
           </Button>
 
           <Button
+            type="button"
             variant="link"
             onClick={handleResend}
-            disabled={!canResend}
-            className={`px-0 ${canResend ? "text-primary" : "text-muted-foreground"}`}
+            disabled={!canResend || resending}
+            className={`${canResend && !resending ? "text-primary hover:text-primary/80" : "text-muted-foreground dark:text-gray-400"} flex items-center`}
           >
-            Resend code
+            {resending ? (
+              <>
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                Resending...
+              </>
+            ) : (
+              "Resend code"
+            )}
           </Button>
         </div>
-      </CardFooter>
-    </Card>
+      </form>
+    </div>
   );
 };
 

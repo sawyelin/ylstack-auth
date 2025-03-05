@@ -1,254 +1,188 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { ShimmerEffect } from "@/components/ui/shimmer-effect";
+import { Eye, EyeOff, Mail, Lock, User, Check } from "lucide-react";
 
 interface SignupFormProps {
-  onSubmit?: (data: SignupFormValues) => void;
-  onLoginClick?: () => void;
+  onSubmit: (data: {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    acceptTerms: boolean;
+  }) => Promise<void>;
+  onLoginClick: () => void;
   loading?: boolean;
+  error?: string;
 }
-
-export interface SignupFormValues {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  acceptTerms: boolean;
-}
-
-const signupFormSchema = z
-  .object({
-    email: z.string().email("Please enter a valid email address"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-      ),
-    confirmPassword: z.string(),
-    acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "You must accept the terms and conditions",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
 
 const SignupForm = ({
-  onSubmit = () => {},
-  onLoginClick = () => {},
+  onSubmit,
+  onLoginClick,
   loading = false,
+  error = "",
 }: SignupFormProps) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [formError, setFormError] = useState(error);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const form = useForm<SignupFormValues>({
-    resolver: zodResolver(signupFormSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-      acceptTerms: false,
-    },
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError("");
 
-  const handleSubmit = (values: SignupFormValues) => {
-    onSubmit(values);
+    if (password !== confirmPassword) {
+      setFormError("Passwords do not match");
+      return;
+    }
+
+    if (!acceptTerms) {
+      setFormError("You must accept the terms and conditions");
+      return;
+    }
+
+    await onSubmit({ email, password, confirmPassword, acceptTerms });
   };
 
   return (
-    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-sm">
-      <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold text-gray-900">Create an account</h2>
-        <p className="mt-2 text-sm text-gray-600">
-          Sign up to start managing your authentication
-        </p>
-      </div>
+    <div className="p-6 bg-card dark:bg-gray-800/90 backdrop-blur-sm">
+      <h2 className="text-2xl font-bold mb-4 text-foreground dark:text-white">
+        Create an account
+      </h2>
+      <p className="mb-6 text-muted-foreground dark:text-gray-300">
+        Enter your details to create your account
+      </p>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="you@example.com"
-                    type="email"
-                    autoComplete="email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-foreground dark:text-gray-200">
+            Email
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-gray-400" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="bg-background dark:bg-gray-900 border-border dark:border-gray-700 pl-10"
+            />
+          </div>
+        </div>
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <div className="relative">
-                  <FormControl>
-                    <Input
-                      placeholder="Create a password"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="new-password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-9 w-9"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-500" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-gray-500" />
-                    )}
-                  </Button>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <div className="relative">
-                  <FormControl>
-                    <Input
-                      placeholder="Confirm your password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      autoComplete="new-password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-9 w-9"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-500" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-gray-500" />
-                    )}
-                  </Button>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="acceptTerms"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-2">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel className="text-sm font-normal">
-                    I agree to the{" "}
-                    <a
-                      href="#"
-                      className="text-primary hover:underline"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      terms of service
-                    </a>{" "}
-                    and{" "}
-                    <a
-                      href="#"
-                      className="text-primary hover:underline"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      privacy policy
-                    </a>
-                  </FormLabel>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" className="w-full mt-6" disabled={loading}>
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Creating account...
-              </div>
-            ) : (
-              <div className="flex items-center justify-center">
-                Sign up <ArrowRight className="ml-2 h-4 w-4" />
-              </div>
-            )}
-          </Button>
-        </form>
-      </Form>
-
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
-          Already have an account?{" "}
-          <button
-            onClick={onLoginClick}
-            className="text-primary font-medium hover:underline"
+        <div className="space-y-2">
+          <Label
+            htmlFor="password"
+            className="text-foreground dark:text-gray-200"
           >
-            Log in
-          </button>
-        </p>
-      </div>
+            Password
+          </Label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-gray-400" />
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="bg-background dark:bg-gray-900 border-border dark:border-gray-700 pl-10 pr-10"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-1 top-1 h-8 w-8"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4 text-muted-foreground dark:text-gray-400" />
+              ) : (
+                <Eye className="h-4 w-4 text-muted-foreground dark:text-gray-400" />
+              )}
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label
+            htmlFor="confirm-password"
+            className="text-foreground dark:text-gray-200"
+          >
+            Confirm Password
+          </Label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground dark:text-gray-400" />
+            <Input
+              id="confirm-password"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="bg-background dark:bg-gray-900 border-border dark:border-gray-700 pl-10 pr-10"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-1 top-1 h-8 w-8"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="h-4 w-4 text-muted-foreground dark:text-gray-400" />
+              ) : (
+                <Eye className="h-4 w-4 text-muted-foreground dark:text-gray-400" />
+              )}
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="terms"
+            checked={acceptTerms}
+            onCheckedChange={(checked) => setAcceptTerms(!!checked)}
+            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+          />
+          <Label
+            htmlFor="terms"
+            className="text-sm text-muted-foreground dark:text-gray-300 cursor-pointer"
+          >
+            I accept the{" "}
+            <a
+              href="#"
+              className="text-primary hover:underline"
+              onClick={(e) => e.preventDefault()}
+            >
+              terms and conditions
+            </a>
+          </Label>
+        </div>
+
+        {formError && (
+          <p className="text-sm text-destructive dark:text-red-400">
+            {formError}
+          </p>
+        )}
+
+        <ShimmerEffect>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary/90 dark:bg-primary/80 text-primary-foreground hover:bg-primary/70 dark:hover:bg-primary/60"
+          >
+            {loading ? "Creating account..." : "Create account"}
+          </Button>
+        </ShimmerEffect>
+      </form>
     </div>
   );
 };

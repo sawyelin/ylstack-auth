@@ -39,24 +39,24 @@ const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch projects when user changes
+  // Fetch projects when user authentication status changes
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       fetchProjects();
     } else {
       setProjects([]);
       setCurrentProject(null);
     }
-  }, [user]);
+  }, [isAuthenticated]);
 
   const fetchProjects = async (): Promise<void> => {
-    if (!user) return;
+    if (!isAuthenticated) return;
 
     setIsLoading(true);
     setError(null);
@@ -98,7 +98,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({
   const createNewProject = async (
     project: Omit<Project, "id" | "createdAt" | "updatedAt">,
   ): Promise<Project | null> => {
-    if (!user) return null;
+    if (!isAuthenticated) return null;
 
     setIsLoading(true);
     setError(null);

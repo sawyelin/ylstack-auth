@@ -1,169 +1,148 @@
-# Multi-Project Authentication Platform
+# AuthPlatform - Multi-Project Authentication System
 
-A comprehensive authentication management dashboard with multi-project support, custom admin panels, and client project management capabilities.
+![AuthPlatform](https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80)
+
+A comprehensive authentication platform with multi-project support, custom admin panels, and powerful user management capabilities built with React, Tailwind CSS v4, and Hono.js.
 
 ## Features
 
-- **Authentication Panel**: Email/password login, email verification, optional MFA, forgot/reset password flows with animated transitions
-- **Project Management**: Create and manage multiple projects with unique API keys and connection settings
-- **Admin Dashboard**: User management, analytics, and project metrics using modern UI components
-- **Cloudflare Integration**: Seamless deployment to Cloudflare Pages with Hono.js backend
-- **Theming**: Polished, customizable theme system with smooth animations and transitions
+- **Multi-Project Support**: Manage authentication for multiple applications from a single dashboard
+- **Secure Authentication**: Email/password login, social providers, and multi-factor authentication
+- **User Management**: Comprehensive tools for managing users, roles, and permissions
+- **Customizable Flows**: Custom email templates, branding, and user experiences
+- **Detailed Analytics**: Insights into user behavior, login patterns, and security events
+- **Modern UI**: Built with Tailwind CSS v4 featuring glassmorphism, animations, and dark mode
 
 ## Tech Stack
 
-- **Frontend**: React, TypeScript, Tailwind CSS, ShadCN UI, Framer Motion
-- **Backend**: Cloudflare Pages Functions with Hono.js
-- **Authentication**: Custom auth implementation
-- **Deployment**: Cloudflare Pages
+- **Frontend**: React, Tailwind CSS v4, Framer Motion, Lucide Icons
+- **Backend**: Hono.js (serverless-ready)
+- **Authentication**: JWT, OAuth, MFA
+- **Deployment**: Cloudflare Pages/Workers
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 16+ and npm/yarn
-- Cloudflare account (for deployment)
+- Node.js 18+ and npm/yarn
+- Cloudflare account (for production deployment)
 
 ### Installation
 
-1. Clone the repository
-
 ```bash
+# Clone the repository
 git clone https://github.com/yourusername/auth-platform.git
 cd auth-platform
-```
 
-2. Install dependencies
-
-```bash
+# Install dependencies
 npm install
-# or
-yarn install
-```
 
-3. Set up environment variables
-
-Create a `.env` file in the root directory with the following variables:
-
-```
-VITE_API_URL=/api
-VITE_CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
-VITE_CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
-```
-
-4. Start the development server
-
-```bash
+# Start development server
 npm run dev
-# or
-yarn dev
 ```
 
-## Enabling Real API Connections
+## Production Setup with Hono.js
 
-By default, the application uses mock data for development. To enable real API connections, update the following configuration flags in their respective files:
+This project currently uses mock data for demonstration purposes. To use it in production with Hono.js:
 
-### Client API
+### 1. Set up Hono.js API
 
-In `src/lib/client.ts`:
+The project already includes a sample Hono.js API in the `api` directory. For production use:
 
-```typescript
-// Change this to true to use real API calls
-export const USE_REAL_API = true;
+1. Update the JWT secret in `api/index.ts`
+2. Connect to a real database instead of using mock data
+3. Implement proper password hashing and security measures
+
+### 2. Configure Environment Variables
+
+Create a `.env` file based on the provided `.env.example`:
+
+```
+VITE_API_URL=https://your-api-url.com
+VITE_JWT_SECRET=your-jwt-secret
+VITE_ENV=production
+VITE_USE_MOCK_DATA=false
 ```
 
-### Hono.js API
+### 3. Deploy to Cloudflare
 
-In `src/lib/hono.ts`:
-
-```typescript
-// Change this to true to use real API
-export const USE_REAL_API = true;
-```
-
-## Cloudflare Pages Deployment
-
-### Local Development with Wrangler
-
-To test Cloudflare Pages Functions locally:
+1. Install Wrangler CLI:
 
 ```bash
-npx wrangler pages dev dist
+npm install -g wrangler
 ```
 
-### Deployment
+2. Configure your Cloudflare account in `wrangler.toml`
 
-1. Build the application
+3. Deploy:
 
 ```bash
-npm run build
-# or
-yarn build
+wrangler publish
 ```
 
-2. Deploy to Cloudflare Pages using Wrangler
+## Authentication Flow
 
-```bash
-npx wrangler pages publish dist
-```
-
-Alternatively, set up a GitHub integration with Cloudflare Pages for automatic deployments.
+1. **Login/Signup**: User enters credentials
+2. **Email Verification**: Verification link sent to email
+3. **MFA (Optional)**: Two-factor authentication if enabled
+4. **JWT Token**: Server issues JWT token upon successful authentication
+5. **Protected Routes**: Token used for accessing protected resources
 
 ## Project Structure
 
 ```
-├── functions/              # Cloudflare Pages Functions
-│   └── api/               # API routes for Cloudflare Pages
-├── public/                # Static assets
 ├── src/
-│   ├── components/        # React components
-│   │   ├── auth/          # Authentication components
-│   │   ├── layout/        # Layout components
-│   │   ├── projects/      # Project management components
-│   │   ├── ui/            # UI components (ShadCN)
-│   │   └── users/         # User management components
-│   ├── context/           # React context providers
-│   ├── lib/               # Utility functions and API clients
-│   │   ├── client.ts      # Frontend API client
-│   │   ├── hono.ts        # Hono.js API routes
-│   │   └── mock-data.ts   # Mock data for development
-│   └── pages/             # Page components
-└── wrangler.toml          # Cloudflare Wrangler configuration
+│   ├── components/       # UI components
+│   │   ├── auth/         # Authentication components
+│   │   ├── layout/       # Layout components
+│   │   ├── pages/        # Page components
+│   │   ├── projects/     # Project management components
+│   │   ├── ui/           # UI library components
+│   │   └── users/        # User management components
+│   ├── context/          # React context providers
+│   ├── lib/              # Utility functions and API clients
+│   ├── pages/            # Route pages
+│   └── types/            # TypeScript type definitions
+├── api/                  # Hono.js API (for production)
+├── public/               # Static assets
+└── index.html            # HTML entry point
 ```
 
-## API Routes
+## Replacing Mock Data with Real API
 
-The API is built with Hono.js and deployed as Cloudflare Pages Functions. Key routes include:
+To replace the mock data with real API calls:
 
-### Authentication
+1. Update the API client in `src/lib/api.ts`:
+   - Set `USE_REAL_API = true`
+   - Implement real API calls to your backend
 
-- `POST /api/auth/signup` - Create a new user account
-- `POST /api/auth/login` - Authenticate a user
-- `POST /api/auth/verify-email` - Verify a user's email address
-- `POST /api/auth/reset-password` - Request a password reset
+2. Update the authentication context in `src/context/AuthContext.tsx`:
+   - Replace mock authentication with real API calls
+   - Implement proper token storage and validation
 
-### Projects
+3. Update the project context in `src/context/ProjectContext.tsx`:
+   - Connect to your real project management API
 
-- `GET /api/projects` - List all projects
-- `GET /api/projects/:id` - Get a specific project
-- `POST /api/projects` - Create a new project
-- `PUT /api/projects/:id` - Update a project
-- `DELETE /api/projects/:id` - Delete a project
+## UI Components
 
-### API Keys
+The project includes a comprehensive set of UI components built with Tailwind CSS v4:
 
-- `GET /api/projects/:projectId/api-keys` - List API keys for a project
-- `POST /api/projects/:projectId/api-keys` - Create a new API key
-- `PUT /api/api-keys/:id/revoke` - Revoke an API key
+- **GlassCard**: Modern glassmorphism effect with backdrop blur
+- **PerspectiveCard**: 3D perspective effect on hover
+- **ConicGradient**: Beautiful animated gradient backgrounds
+- **ShimmerEffect**: Loading and highlight effects
+- **FloatingElement**: Subtle floating animations
+- **StartingAnimation**: Entrance animations for elements
 
-### Analytics
-
-- `GET /api/projects/:projectId/events` - Get authentication events for a project
-- `GET /api/projects/:projectId/analytics` - Get analytics summary for a project
+These components are designed to work seamlessly in both light and dark modes.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add some amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
 ## License
 

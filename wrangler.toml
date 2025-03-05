@@ -1,8 +1,7 @@
 name = "auth-platform"
 type = "javascript"
-account_id = "your-account-id"
 workers_dev = true
-compatibility_date = "2023-06-28"
+compatibility_date = "2023-01-01"
 
 [site]
 bucket = "./dist"
@@ -12,23 +11,3 @@ command = "npm run build"
 
 [build.upload]
 format = "service-worker"
-
-[[routes]]
-pattern = "/api/*"
-script = "api/[[route]]"
-
-[[routes]]
-pattern = "*"
-script = "index.html"
-
-[env.production]
-route = "your-domain.com/*"
-
-[env.staging]
-route = "staging.your-domain.com/*"
-
-[vars]
-ENVIRONMENT = "development"
-
-# Add your environment variables here
-# JWT_SECRET = "your-secret-key"

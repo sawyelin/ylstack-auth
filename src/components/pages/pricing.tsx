@@ -3,7 +3,9 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../layout/Navbar";
 import { Button } from "../ui/button";
-import { AnimatedBorder, AnimatedGradientBorder } from "../ui/animated-border";
+import { ShimmerButton } from "../ui/shimmer-effect";
+import { PerspectiveCard } from "../ui/perspective-card";
+import { GlassCard } from "../ui/glass-card";
 import {
   BackgroundGradient,
   BackgroundPattern,
@@ -48,8 +50,8 @@ const PricingPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <AnimatedBorder containerClassName="h-full">
-                    <div className="bg-card dark:bg-gray-800/90 backdrop-blur-sm p-6 rounded-lg h-full flex flex-col">
+                  <PerspectiveCard>
+                    <GlassCard className="h-full p-6 backdrop-blur-xl bg-white/5 dark:bg-black/5 border border-white/20 dark:border-white/10 hover:bg-white/10 dark:hover:bg-black/10 transition-all duration-300">
                       {plan.featured && (
                         <div className="bg-primary/10 dark:bg-primary/20 text-primary text-sm font-medium py-1 px-3 rounded-full self-start mb-4">
                           Most Popular
@@ -85,12 +87,12 @@ const PricingPage = () => {
 
                       <Button
                         className={`w-full ${plan.featured ? "bg-primary hover:bg-primary/90" : "bg-muted/50 dark:bg-gray-700 hover:bg-muted dark:hover:bg-gray-600"}`}
-                        onClick={() => (window.location.href = "/signup")}
+                        onClick={() => navigate("/signup")}
                       >
                         Get Started
                       </Button>
-                    </div>
-                  </AnimatedBorder>
+                    </GlassCard>
+                  </PerspectiveCard>
                 </motion.div>
               ))}
             </div>
@@ -179,16 +181,14 @@ const PricingPage = () => {
 
             <div className="space-y-6">
               {faqs.map((faq, index) => (
-                <AnimatedGradientBorder key={index} containerClassName="w-full">
-                  <div className="p-6 bg-card dark:bg-gray-800 rounded-lg">
-                    <h3 className="text-lg font-semibold text-foreground dark:text-white mb-2">
-                      {faq.question}
-                    </h3>
-                    <p className="text-muted-foreground dark:text-gray-300">
-                      {faq.answer}
-                    </p>
-                  </div>
-                </AnimatedGradientBorder>
+                <GlassCard key={index} className="p-6 backdrop-blur-md">
+                  <h3 className="text-lg font-semibold text-foreground dark:text-white mb-2">
+                    {faq.question}
+                  </h3>
+                  <p className="text-muted-foreground dark:text-gray-300">
+                    {faq.answer}
+                  </p>
+                </GlassCard>
               ))}
             </div>
           </div>
@@ -205,15 +205,15 @@ const PricingPage = () => {
               secure their applications.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <AnimatedBorder>
+              <ShimmerButton>
                 <Button
                   size="lg"
-                  className="bg-primary hover:bg-primary/90"
-                  onClick={() => (window.location.href = "/signup")}
+                  className="bg-primary/90 dark:bg-primary/80 text-primary-foreground hover:bg-primary/70 dark:hover:bg-primary/60"
+                  onClick={() => navigate("/signup")}
                 >
                   Start Free Trial
                 </Button>
-              </AnimatedBorder>
+              </ShimmerButton>
               <Button
                 size="lg"
                 variant="outline"
@@ -225,6 +225,164 @@ const PricingPage = () => {
           </div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12 px-4">
+        <div className="container mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">AuthPlatform</h3>
+              <p className="text-gray-400">
+                Secure authentication for your applications
+              </p>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Product</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Documentation
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Company</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Careers
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    Cookie Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400">
+              © {new Date().getFullYear()} AuthPlatform. All rights reserved.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <span className="sr-only">Twitter</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                </svg>
+              </a>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <span className="sr-only">GitHub</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <span className="sr-only">LinkedIn</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
@@ -276,17 +434,50 @@ const pricingPlans = [
 
 // Feature comparison data
 const featureComparison = [
-  { name: "Monthly active users", availability: [true, true, true] },
-  { name: "Email/password authentication", availability: [true, true, true] },
-  { name: "Social login providers", availability: [false, true, true] },
-  { name: "Multi-factor authentication", availability: [false, true, true] },
-  { name: "Custom email templates", availability: [false, true, true] },
-  { name: "Custom branding", availability: [false, false, true] },
-  { name: "SSO integration", availability: [false, false, true] },
-  { name: "API access", availability: [true, true, true] },
-  { name: "Analytics dashboard", availability: [false, true, true] },
-  { name: "Priority support", availability: [false, true, true] },
-  { name: "Dedicated support", availability: [false, false, true] },
+  {
+    name: "Email/Password Authentication",
+    availability: [true, true, true],
+  },
+  {
+    name: "Social Login Providers",
+    availability: [false, true, true],
+  },
+  {
+    name: "Multi-factor Authentication",
+    availability: [false, true, true],
+  },
+  {
+    name: "Custom Email Templates",
+    availability: [false, true, true],
+  },
+  {
+    name: "User Management",
+    availability: [true, true, true],
+  },
+  {
+    name: "Role-based Access Control",
+    availability: [false, true, true],
+  },
+  {
+    name: "API Access",
+    availability: [true, true, true],
+  },
+  {
+    name: "Custom Domains",
+    availability: [false, false, true],
+  },
+  {
+    name: "SSO Integration",
+    availability: [false, false, true],
+  },
+  {
+    name: "Priority Support",
+    availability: [false, true, true],
+  },
+  {
+    name: "Dedicated Account Manager",
+    availability: [false, false, true],
+  },
 ];
 
 // FAQ data
@@ -294,32 +485,32 @@ const faqs = [
   {
     question: "How does the 14-day free trial work?",
     answer:
-      "You can sign up for any plan and use all features for 14 days without being charged. No credit card required to start. You'll be notified before the trial ends.",
+      "You can sign up for any plan and use all features for 14 days without being charged. No credit card is required to start your trial. After the trial period, you can choose to subscribe to continue using the service.",
   },
   {
-    question: "Can I switch plans later?",
+    question: "Can I change plans later?",
     answer:
-      "Yes, you can upgrade or downgrade your plan at any time. When upgrading, you'll be charged the prorated amount for the remainder of your billing cycle.",
+      "Yes, you can upgrade or downgrade your plan at any time. When upgrading, you'll get immediate access to the new features. When downgrading, the changes will take effect at the start of your next billing cycle.",
   },
   {
     question: "How do you count monthly active users?",
     answer:
-      "A monthly active user is any user who authenticates through our platform at least once in a 30-day period. We don't count duplicate authentications from the same user.",
+      "A monthly active user is any user who authenticates through our platform at least once during a calendar month. Users are counted across all your projects within the same plan.",
   },
   {
     question: "Do you offer discounts for startups or non-profits?",
     answer:
-      "Yes, we offer special pricing for eligible startups and non-profit organizations. Please contact our sales team for more information.",
+      "Yes, we offer special pricing for eligible startups and non-profit organizations. Please contact our sales team for more information about our startup and non-profit programs.",
   },
   {
     question: "What payment methods do you accept?",
     answer:
-      "We accept all major credit cards, including Visa, Mastercard, and American Express. For Enterprise plans, we also offer invoicing.",
+      "We accept all major credit cards (Visa, Mastercard, American Express) and PayPal. For Enterprise plans, we also offer invoicing with net-30 payment terms.",
   },
   {
-    question: "How secure is your platform?",
+    question: "Can I use the platform for free?",
     answer:
-      "Security is our top priority. We use industry-standard encryption, regular security audits, and follow best practices for authentication. Our platform is SOC 2 Type II compliant.",
+      "Yes, our Starter plan is free forever for up to 1,000 monthly active users. It includes essential authentication features to get you started, with the option to upgrade as your needs grow.",
   },
 ];
 

@@ -4,11 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./layout/Navbar";
 import AuthCard from "./auth/AuthCard";
 import { Button } from "./ui/button";
-import {
-  AnimatedBorder,
-  AnimatedGradientBorder,
-  AnimatedPathBorder,
-} from "./ui/animated-border";
+import { ShimmerButton } from "./ui/shimmer-effect";
+import { PerspectiveCard } from "./ui/perspective-card";
+import { ConicGradient } from "./ui/conic-gradient";
+import { FloatingElement } from "./ui/floating-element";
+import { GlassCard } from "./ui/glass-card";
 import {
   BackgroundGradient,
   BackgroundPattern,
@@ -29,13 +29,18 @@ const Home = () => {
     password: string;
     rememberMe: boolean;
   }) => {
-    console.log("Login attempt with:", data);
-    // Simulate successful login
-    setUser({
-      name: "John Doe",
-      email: data.email,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=john`,
-    });
+    try {
+      // In a real app, this would use the AuthContext
+      console.log("Login attempt with:", data);
+      // Simulate successful login
+      setUser({
+        name: "John Doe",
+        email: data.email,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=john`,
+      });
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   const handleSignup = async (data: {
@@ -44,9 +49,14 @@ const Home = () => {
     confirmPassword: string;
     acceptTerms: boolean;
   }) => {
-    console.log("Signup attempt with:", data);
-    // In a real app, this would create a new user account
-    return Promise.resolve();
+    try {
+      // In a real app, this would use the AuthContext
+      console.log("Signup attempt with:", data);
+      // In a real app, this would create a new user account
+      return Promise.resolve();
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
   };
 
   const handleLogout = () => {
@@ -81,10 +91,10 @@ const Home = () => {
                   capabilities.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <AnimatedGradientBorder>
+                  <ShimmerButton>
                     <Button
                       size="lg"
-                      className="w-full bg-background dark:bg-gray-900 text-foreground dark:text-white hover:bg-muted/50 dark:hover:bg-gray-800/50"
+                      className="w-full bg-primary/90 dark:bg-primary/80 text-primary-foreground hover:bg-primary/70 dark:hover:bg-primary/60 relative overflow-hidden"
                       onClick={() => {
                         const featuresSection =
                           document.getElementById("features");
@@ -96,12 +106,12 @@ const Home = () => {
                     >
                       Explore Features
                     </Button>
-                  </AnimatedGradientBorder>
-                  <AnimatedPathBorder>
+                  </ShimmerButton>
+                  <ConicGradient>
                     <Button
                       size="lg"
                       variant="outline"
-                      className="w-full"
+                      className="w-full bg-background/80 dark:bg-gray-900/80 backdrop-blur-sm border-primary/20 dark:border-primary/30"
                       onClick={() => {
                         const docsSection = document.getElementById("docs");
                         if (docsSection)
@@ -111,7 +121,7 @@ const Home = () => {
                     >
                       View Documentation
                     </Button>
-                  </AnimatedPathBorder>
+                  </ConicGradient>
                 </div>
               </motion.div>
 
@@ -121,16 +131,33 @@ const Home = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="flex justify-center"
               >
-                <AnimatedBorder
-                  className="p-0"
-                  containerClassName="w-full max-w-md"
-                >
-                  <AuthCard
-                    initialView="login"
-                    onLogin={handleLogin}
-                    onSignup={handleSignup}
-                  />
-                </AnimatedBorder>
+                <div className="w-full max-w-md">
+                  <PerspectiveCard rotateAmount={5}>
+                    <GlassCard className="backdrop-blur-xl bg-white/10 dark:bg-black/10">
+                      <AuthCard
+                        initialView="login"
+                        onLogin={handleLogin}
+                        onSignup={handleSignup}
+                        onForgotPassword={async (email) => {
+                          console.log("Forgot password for:", email);
+                          // In a real app, this would send a reset email
+                        }}
+                        onResetPassword={async (password) => {
+                          console.log("Reset password to:", password);
+                          // In a real app, this would update the password
+                        }}
+                        onVerifyMfa={async (code) => {
+                          console.log("MFA code:", code);
+                          // In a real app, this would verify the MFA code
+                        }}
+                        onResendVerification={async () => {
+                          console.log("Resend verification");
+                          // In a real app, this would resend the verification email
+                        }}
+                      />
+                    </GlassCard>
+                  </PerspectiveCard>
+                </div>
               </motion.div>
             </div>
           </div>
@@ -183,8 +210,8 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <AnimatedGradientBorder containerClassName="h-full">
-                    <div className="bg-card dark:bg-gray-800/90 backdrop-blur-sm p-6 rounded-lg h-full">
+                  <PerspectiveCard rotateAmount={3}>
+                    <GlassCard className="p-6 backdrop-blur-md">
                       <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                         {feature.icon}
                       </div>
@@ -194,8 +221,8 @@ const Home = () => {
                       <p className="text-muted-foreground dark:text-gray-300">
                         {feature.description}
                       </p>
-                    </div>
-                  </AnimatedGradientBorder>
+                    </GlassCard>
+                  </PerspectiveCard>
                 </motion.div>
               ))}
             </div>
@@ -225,8 +252,8 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <AnimatedBorder containerClassName="h-full">
-                    <div className="bg-card dark:bg-gray-800/90 backdrop-blur-sm p-6 rounded-lg h-full flex flex-col">
+                  <GlassCard className="h-full p-6 backdrop-blur-xl bg-white/5 dark:bg-black/5 border border-white/20 dark:border-white/10 hover:bg-white/10 dark:hover:bg-black/10 transition-all duration-300">
+                    <div className="bg-card/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg h-full flex flex-col">
                       <div className="mb-6">
                         <h3 className="text-xl font-semibold text-foreground dark:text-white mb-2">
                           {plan.name}
@@ -262,7 +289,7 @@ const Home = () => {
                         Get Started
                       </Button>
                     </div>
-                  </AnimatedBorder>
+                  </GlassCard>
                 </motion.div>
               ))}
             </div>
@@ -293,8 +320,8 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <AnimatedPathBorder containerClassName="h-full">
-                    <div className="bg-card dark:bg-gray-800 p-6 rounded-lg h-full flex flex-col">
+                  <FloatingElement delay={index * 0.2}>
+                    <GlassCard className="h-full p-6 backdrop-blur-md">
                       <div className="aspect-video rounded-md overflow-hidden mb-4 bg-muted dark:bg-gray-700">
                         <img
                           src={post.image}
@@ -333,8 +360,8 @@ const Home = () => {
                       >
                         Read More <ExternalLink className="ml-1 h-3 w-3" />
                       </Button>
-                    </div>
-                  </AnimatedPathBorder>
+                    </GlassCard>
+                  </FloatingElement>
                 </motion.div>
               ))}
             </div>
@@ -356,50 +383,52 @@ const Home = () => {
           <BackgroundGradient variant="green" />
 
           <div className="container relative z-10 mx-auto max-w-7xl">
-            <div className="bg-card/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-2">
-                <div className="p-8 md:p-12 lg:px-16 lg:py-24">
-                  <div className="mx-auto max-w-xl">
-                    <h2 className="text-3xl font-bold text-foreground dark:text-white md:text-4xl">
-                      Ready to secure your applications?
-                    </h2>
-                    <p className="mt-4 text-lg text-muted-foreground dark:text-gray-300">
-                      Get started with our authentication platform today and
-                      provide your users with a seamless, secure login
-                      experience.
-                    </p>
-                    <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                      <AnimatedBorder>
+            <ConicGradient className="p-[1px] rounded-2xl">
+              <div className="bg-card/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-2">
+                  <div className="p-8 md:p-12 lg:px-16 lg:py-24">
+                    <div className="mx-auto max-w-xl">
+                      <h2 className="text-3xl font-bold text-foreground dark:text-white md:text-4xl">
+                        Ready to secure your applications?
+                      </h2>
+                      <p className="mt-4 text-lg text-muted-foreground dark:text-gray-300">
+                        Get started with our authentication platform today and
+                        provide your users with a seamless, secure login
+                        experience.
+                      </p>
+                      <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                        <ShimmerButton>
+                          <Button
+                            size="lg"
+                            className="w-full bg-primary/90 dark:bg-primary/80 text-primary-foreground hover:bg-primary/70 dark:hover:bg-primary/60"
+                            onClick={() => navigate("/signup")}
+                          >
+                            Get Started
+                          </Button>
+                        </ShimmerButton>
                         <Button
+                          variant="outline"
                           size="lg"
-                          className="w-full bg-background dark:bg-gray-900 text-foreground dark:text-white hover:bg-muted/50 dark:hover:bg-gray-800/50"
-                          onClick={() => navigate("/signup")}
+                          className="border-primary/20 dark:border-primary/30"
+                          onClick={() =>
+                            window.open("mailto:sales@authplatform.com")
+                          }
                         >
-                          Get Started
+                          Contact Sales
                         </Button>
-                      </AnimatedBorder>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="border-primary/20 dark:border-primary/30"
-                        onClick={() =>
-                          window.open("mailto:sales@authplatform.com")
-                        }
-                      >
-                        Contact Sales
-                      </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="relative hidden lg:block">
-                  <img
-                    src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80"
-                    alt="Colorful abstract background"
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
+                  <div className="relative hidden lg:block">
+                    <img
+                      src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80"
+                      alt="Colorful abstract background"
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </ConicGradient>
           </div>
         </section>
       </main>

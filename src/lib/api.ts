@@ -41,11 +41,13 @@ export async function getProjects(): Promise<Project[]> {
   }
 
   try {
-    const { data, error } = await supabase.from("projects").select("*");
-
-    if (error) throw error;
-
-    return data as Project[];
+    // In production, replace with actual API call to your backend
+    const response = await fetch("/api/projects");
+    if (!response.ok) {
+      throw new Error("Failed to fetch projects");
+    }
+    const data = await response.json();
+    return data.projects;
   } catch (error) {
     console.error("Error fetching projects:", error);
     return [];
@@ -64,15 +66,13 @@ export async function getProject(projectId: string): Promise<Project | null> {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("id", projectId)
-      .single();
-
-    if (error) throw error;
-
-    return data as Project;
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/projects/${projectId}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch project ${projectId}`);
+    }
+    const data = await response.json();
+    return data.project;
   } catch (error) {
     console.error(`Error fetching project ${projectId}:`, error);
     return null;
@@ -101,20 +101,21 @@ export async function createProject(
   }
 
   try {
-    const { data, error } = await supabase
-      .from("projects")
-      .insert({
-        name: project.name,
-        description: project.description,
-        status: project.status,
-        owner_id: project.ownerId,
-      })
-      .select()
-      .single();
+    // In production, replace with actual API call to your backend
+    const response = await fetch("/api/projects", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(project),
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      throw new Error("Failed to create project");
+    }
 
-    return data as Project;
+    const data = await response.json();
+    return data.project;
   } catch (error) {
     console.error("Error creating project:", error);
     return null;
@@ -146,19 +147,21 @@ export async function updateProject(
   }
 
   try {
-    const { data, error } = await supabase
-      .from("projects")
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", projectId)
-      .select()
-      .single();
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/projects/${projectId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updates),
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to update project ${projectId}`);
+    }
 
-    return data as Project;
+    const data = await response.json();
+    return data.project;
   } catch (error) {
     console.error(`Error updating project ${projectId}:`, error);
     return null;
@@ -181,12 +184,14 @@ export async function deleteProject(projectId: string): Promise<boolean> {
   }
 
   try {
-    const { error } = await supabase
-      .from("projects")
-      .delete()
-      .eq("id", projectId);
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/projects/${projectId}`, {
+      method: "DELETE",
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to delete project ${projectId}`);
+    }
 
     return true;
   } catch (error) {
@@ -207,14 +212,13 @@ export async function getApiKeys(projectId: string): Promise<ApiKey[]> {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("api_keys")
-      .select("*")
-      .eq("project_id", projectId);
-
-    if (error) throw error;
-
-    return data as ApiKey[];
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/projects/${projectId}/api-keys`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch API keys for project ${projectId}`);
+    }
+    const data = await response.json();
+    return data.apiKeys;
   } catch (error) {
     console.error(`Error fetching API keys for project ${projectId}:`, error);
     return [];
@@ -242,20 +246,21 @@ export async function createApiKey(
   }
 
   try {
-    const { data, error } = await supabase
-      .from("api_keys")
-      .insert({
-        name: apiKey.name,
-        key: apiKey.key,
-        project_id: apiKey.projectId,
-        status: apiKey.status,
-      })
-      .select()
-      .single();
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/projects/${apiKey.projectId}/api-keys`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(apiKey),
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      throw new Error("Failed to create API key");
+    }
 
-    return data as ApiKey;
+    const data = await response.json();
+    return data.apiKey;
   } catch (error) {
     console.error("Error creating API key:", error);
     return null;
@@ -278,12 +283,14 @@ export async function revokeApiKey(keyId: string): Promise<boolean> {
   }
 
   try {
-    const { error } = await supabase
-      .from("api_keys")
-      .update({ status: "expired" })
-      .eq("id", keyId);
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/api-keys/${keyId}/revoke`, {
+      method: "PUT",
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to revoke API key ${keyId}`);
+    }
 
     return true;
   } catch (error) {
@@ -304,23 +311,13 @@ export async function getProjectUsers(projectId: string): Promise<User[]> {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("project_users")
-      .select("user_id")
-      .eq("project_id", projectId);
-
-    if (error) throw error;
-
-    // Fetch user details for each user ID
-    const userIds = data.map((item) => item.user_id);
-    const { data: users, error: usersError } = await supabase
-      .from("users")
-      .select("*")
-      .in("id", userIds);
-
-    if (usersError) throw usersError;
-
-    return users as User[];
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/projects/${projectId}/users`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch users for project ${projectId}`);
+    }
+    const data = await response.json();
+    return data.users;
   } catch (error) {
     console.error(`Error fetching users for project ${projectId}:`, error);
     return [];
@@ -343,12 +340,18 @@ export async function addUserToProject(
   }
 
   try {
-    const { error } = await supabase.from("project_users").insert({
-      project_id: projectId,
-      user_id: userId,
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/projects/${projectId}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
     });
 
-    if (error) throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to add user ${userId} to project ${projectId}`);
+    }
 
     return true;
   } catch (error) {
@@ -376,13 +379,16 @@ export async function removeUserFromProject(
   }
 
   try {
-    const { error } = await supabase
-      .from("project_users")
-      .delete()
-      .eq("project_id", projectId)
-      .eq("user_id", userId);
+    // In production, replace with actual API call to your backend
+    const response = await fetch(`/api/projects/${projectId}/users/${userId}`, {
+      method: "DELETE",
+    });
 
-    if (error) throw error;
+    if (!response.ok) {
+      throw new Error(
+        `Failed to remove user ${userId} from project ${projectId}`,
+      );
+    }
 
     return true;
   } catch (error) {
